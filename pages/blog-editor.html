@@ -1237,7 +1237,7 @@
                     "Bạn đang chỉnh sửa một bài viết ĐÃ XUẤT BẢN.\nBạn có chắc chắn muốn hủy bỏ các thay đổi này và rời đi không?",
                     { text: "Rời đi", class: "px-4 py-2 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500/20 font-medium text-sm transition-colors" },
                     { text: "Ở lại", class: "px-4 py-2 bg-transparent text-[#8B949E] hover:text-[#E6EDF3] font-medium text-sm transition-colors" },
-                    () => { window.location.href = 'manage-blogs.html'; },
+                    () => { window.location.href = '/pages/Manage-blogs.html'; },
                     null
                 );
             } else {
@@ -1247,11 +1247,11 @@
                     { text: "Lưu & Rời đi", class: "px-4 py-2 bg-[#ac8aff] text-[#0D1117] rounded-lg hover:opacity-90 font-medium text-sm transition-opacity" },
                     { text: "Bỏ qua & Rời đi", class: "px-4 py-2 bg-transparent text-[#8B949E] hover:text-[#E6EDF3] font-medium text-sm transition-colors" },
                     () => { saveAsDraftAndLeave(); },
-                    () => { window.location.href = 'manage-blogs.html'; }
+                    () => { window.location.href = '/pages/Manage-blogs.html'; }
                 );
             }
         } else {
-            window.location.href = 'manage-blogs.html';
+            window.location.href = '/pages/Manage-blogs.html';
         }
     }
 
@@ -1304,7 +1304,7 @@
             const apiEndpoint = editingBlogId ? '/blogs/' + editingBlogId : '/blogs';
 
             await callApi(apiEndpoint, apiMethod, requestBody);
-            window.location.href = 'manage-blogs.html';
+            window.location.href = '/pages/Manage-blogs.html';
 
         } catch (error) {
             showModal("Lỗi Lưu Nháp", "Không thể lưu bản nháp lúc này. Vui lòng thử lại sau.",
