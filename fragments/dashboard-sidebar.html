@@ -9,7 +9,7 @@
         <div class="space-y-2">
             <p class="px-4 text-[10px] font-bold text-[#a5abba]/50 uppercase tracking-[0.2em]">Dashboard</p>
             <div class="space-y-1">
-                <a class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-['Inter'] text-sm uppercase no-underline" href="/pages/Manage-blogs.html">
+                <a class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-['Inter'] text-sm uppercase no-underline" href="/pages/manage-blogs.html">
                     <span class="material-symbols-outlined">article</span> <span>Blog</span>
                 </a>
                 <a class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-['Inter'] text-sm uppercase no-underline" href="/pages/saved-blogs.html">
@@ -51,7 +51,7 @@
 
         $('.sidebar-link').each(function() {
             var href = $(this).attr('href').toLowerCase();
-            if (page === href || (page === '' && href === 'manage-blogs.html')) {
+            if (page === href || (page === '' && href === '/pages/manage-blogs.html')) {
                 $(this).addClass(activeClasses);
                 $(this).find('.material-symbols-outlined').css('font-variation-settings', "'FILL' 1");
             } else {
