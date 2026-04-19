@@ -1,0 +1,190 @@
+<nav id="navbar" class="navbar-custom">
+    <div class="container-xl d-flex align-items-center justify-content-between">
+
+        <div class="d-flex align-items-center gap-4">
+            <div class="brand d-flex align-items-center gap-2" id="nav-brand" style="cursor: pointer;">
+                <svg width="28" height="28" viewBox="0 0 22 22" fill="none">
+                    <rect width="22" height="22" rx="6" fill="url(#lg)"/>
+                    <path d="M6 16V9l5-3 5 3v7" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M9 16v-4h4v4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <defs>
+                        <linearGradient id="lg" x1="0" y1="0" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#7c6ff7"/>
+                            <stop offset="1" stop-color="#9f7aea"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                Inkwell
+            </div>
+
+            <div class="position-relative search-wrapper">
+                <div class="nav-search-box d-none d-md-flex">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="nav-search-input" placeholder="Search Inkwell..." autocomplete="off">
+                </div>
+                <div id="desk-search-dropdown" class="search-dropdown-menu shadow-lg"></div>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-4" id="auth-area">
+
+            <div class="nav-guest d-flex align-items-center gap-3">
+                <a href="/pages/login.html" class="btn btn-pill text-decoration-none fw-medium"
+                   onmouseover="this.style.background='rgba(124,111,247,0.1)'; this.style.borderColor='var(--purple)';"
+                   onmouseout="this.style.background='transparent'; this.style.borderColor='var(--bd-p)';"
+                   style="border: 1px solid var(--bd-p); color: var(--t1); transition: all 0.2s; padding: 0.45rem 1.4rem;">
+                    Sign In
+                </a>
+
+                <a href="/pages/register.html" class="btn btn-pill text-decoration-none fw-medium"
+                   onmouseover="this.style.background='rgba(124,111,247,0.1)'; this.style.borderColor='var(--purple)';"
+                   onmouseout="this.style.background='transparent'; this.style.borderColor='var(--bd-p)';"
+                   style="border: 1px solid var(--bd-p); color: var(--t1); transition: all 0.2s; padding: 0.45rem 1.4rem;">
+                    Sign Up
+                </a>
+            </div>
+
+            <div class="nav-user align-items-center gap-4" style="display: none !important;">
+
+                <a href="/pages/blog-editor.html" class="nav-action-link d-none d-sm-flex text-decoration-none" style="color: var(--t2); transition: color 0.2s;" onmouseover="this.style.color='var(--t1)'" onmouseout="this.style.color='var(--t2)'">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                    Write
+                </a>
+
+                <a href="/pages/notifications.html" class="position-relative d-flex align-items-center justify-content-center text-decoration-none" style="color: var(--t2); cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='var(--t1)'" onmouseout="this.style.color='var(--t2)'" title="Notifications">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+
+                    <span id="nav-notif-badge" class="hidden position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; transform: translate(-30%, 10%) !important;">
+                        0
+                    </span>
+                </a>
+
+                <div class="avatar-dropdown">
+                    <div id="nav-avatar" class="avatar">
+                        ?
+                    </div>
+
+                    <div class="avatar-dropdown-menu">
+                        <div class="dd-user-info">
+                            <div class="d-role">Author</div>
+                            <div class="d-name" id="nav-username">@guest</div>
+                        </div>
+
+                        <a href="/pages/user-profile.html">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            Profile
+                        </a>
+                        <a href="/pages/manage-blogs.html">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+                            Dashboard
+                        </a>
+                        <a href="/pages/saved-blogs.html">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                            Saved Reading
+                        </a>
+                        <a href="/pages/edit-profile.html">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                            Settings
+                        </a>
+
+                        <a href="/admin/dashboard.html" target="_blank" id="btn-desk-admin" style="display: none; color: #ac8aff; font-weight: 600;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                            Admin Controller
+                        </a>
+
+                        <hr>
+                        <a href="#" id="btn-logout" class="text-danger">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                            Sign Out
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-link d-md-none p-0 ms-2" data-bs-toggle="offcanvas" data-bs-target="#mob-menu" style="color: var(--t1);">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+
+        </div>
+    </div>
+</nav>
+
+<div class="offcanvas offcanvas-end" id="mob-menu" tabindex="-1">
+    <div class="offcanvas-header">
+        <span class="offcanvas-title fw-bold">Inkwell</span>
+        <button class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+
+        <div class="position-relative search-wrapper mb-4 w-100">
+            <div class="nav-search-box d-flex w-100">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="mob-search-input" placeholder="Search Inkwell..." autocomplete="off">
+            </div>
+            <div id="mob-search-dropdown" class="search-dropdown-menu shadow-lg"></div>
+        </div>
+
+        <button class="mb-nav-btn is-active" data-page="home" data-bs-dismiss="offcanvas">Home</button>
+        <button class="mb-nav-btn" data-page="categories" data-bs-dismiss="offcanvas">Categories</button>
+        <button class="mb-nav-btn" data-page="tags" data-bs-dismiss="offcanvas">Tags</button>
+
+        <hr class="my-4" style="border-color: var(--bd);">
+
+        <div id="mob-auth">
+            <div class="nav-guest d-flex flex-column gap-3">
+                <a href="/pages/register.html" class="btn btn-newpost btn-pill w-100 justify-content-center">Sign Up</a>
+                <a href="/pages/login.html" class="btn btn-login w-100" style="border-radius: 50px; padding: 0.6rem;">Sign In</a>
+            </div>
+
+            <div class="nav-user flex-column gap-3" style="display: none !important;">
+                <div class="d-flex align-items-center gap-3 mb-2 px-2" onclick="window.location.href='user-profile.html'" style="cursor:pointer;">
+                    <div id="mob-nav-avatar" class="avatar" style="width: 48px; height: 48px; font-size: 1.2rem;">
+                        ?
+                    </div>
+                    <div>
+                        <div class="fw-bold" style="color: var(--t1);">Profile</div>
+                        <div id="mob-nav-username" class="text-muted" style="font-size: 0.85rem;">@guest</div>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column gap-1">
+                    <a href="/pages/blog-editor.html" class="btn text-start border-0 py-2 d-flex align-items-center gap-2" style="color: var(--t2);">
+                        <span class="material-symbols-outlined text-muted" style="font-size:1.1rem;">edit_square</span> Write an article
+                    </a>
+
+                    <a href="/pages/notifications.html" class="btn text-start border-0 py-2 d-flex align-items-center gap-2 position-relative" style="color: var(--t2);">
+                        <span class="material-symbols-outlined text-muted" style="font-size:1.1rem;">notifications</span> Notifications
+                        <span id="mob-notif-badge" class="hidden ms-auto badge rounded-pill bg-danger" style="font-size: 0.7rem;">0</span>
+                    </a>
+
+                    <a href="/pages/manage-blogs.html" class="btn text-start border-0 py-2 d-flex align-items-center gap-2" style="color: var(--t2);">
+                        <span class="material-symbols-outlined text-muted" style="font-size:1.1rem;">article</span> Dashboard
+                    </a>
+                    <a href="/pages/saved-blogs.html" class="btn text-start border-0 py-2 d-flex align-items-center gap-2" style="color: var(--t2);">
+                        <span class="material-symbols-outlined text-muted" style="font-size:1.1rem;">bookmark</span> Saved Reading
+                    </a>
+                    <a href="/pages/edit-profile.html" class="btn text-start border-0 py-2 d-flex align-items-center gap-2" style="color: var(--t2);">
+                        <span class="material-symbols-outlined text-muted" style="font-size:1.1rem;">manage_accounts</span> Settings
+                    </a>
+
+                    <a href="/admin/dashboard.html" target="_blank" id="btn-mob-admin" class="btn text-start border-0 py-2 align-items-center gap-2" style="display: none !important; color: #ac8aff; font-weight: 600;">
+                        <span class="material-symbols-outlined" style="font-size:1.1rem; color: #ac8aff;">admin_panel_settings</span> Admin Controller
+                    </a>
+                </div>
+
+                <button id="btn-mob-logout" class="btn btn-drafts w-100 mt-2 justify-content-center" style="color: #f87171; border-color: rgba(248,113,113,.2); background: rgba(248,113,113,.09);">Sign Out</button>
+            </div>
+        </div>
+
+    </div>
+</div>

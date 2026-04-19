@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - Blog</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Tùy chỉnh vị trí Toast để luôn nổi trên cùng góc phải */
+        .toast-container {
+            z-index: 1055;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+<div class="toast-container position-fixed top-0 end-0 p-3">
+    <div id="liveToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" id="toastMessage">
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row min-vh-100 align-items-center justify-content-center">
+        <div class="col-12 col-sm-8 col-md-6 col-lg-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h2 class="text-center mb-4 fw-bold">Đăng Nhập</h2>
+
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Tên đăng nhập</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Mật khẩu</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-4">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                                <label class="form-check-label small" for="remember">Ghi nhớ</label>
+                            </div>
+                            <a href="/pages/forgot-password.html" class="small text-decoration-none">Quên mật khẩu?</a>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary" id="btnSubmit">Đăng nhập</button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-4">
+                        <span class="small text-muted">Chưa có tài khoản? <a href="/pages/register.html" class="text-primary text-decoration-none">Đăng ký</a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Hàm tiện ích để hiển thị thông báo Toast
+    function showToast(message, type = 'danger') {
+        const toastElement = document.getElementById('liveToast');
+        const toastBody = document.getElementById('toastMessage');
+
+        // Đặt nội dung
+        toastBody.textContent = message;
+
+        // Xóa các class màu cũ (nếu có) và thêm màu mới (danger = đỏ, success = xanh...)
+        toastElement.className = `toast align-items-center text-bg-${type} border-0`;
+
+        // Khởi tạo và hiển thị Toast bằng Bootstrap JS API
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+        // 1. Chặn hành động reload trang mặc định của Form
+        event.preventDefault();
+
+        // 2. Lấy dữ liệu người dùng nhập
+        const user = document.getElementById('username').value;
+        const pass = document.getElementById('password').value;
+
+        // Hiệu ứng UX: Vô hiệu hóa nút bấm tạm thời để tránh bấm 2 lần
+        const btnSubmit = document.getElementById('btnSubmit');
+        btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang xử lý...';
+        btnSubmit.disabled = true;
+
+        // 3. Gửi request gọi API của Spring Boot
+        fetch('https://blog-inkwell.onrender.com/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: user,
+                password: pass
+            })
+        })
+            .then(response => response.json().then(data => ({ status: response.status, body: data })))
+            .then(({ status, body }) => {
+                // Trả lại trạng thái ban đầu cho nút bấm
+                btnSubmit.innerHTML = 'Đăng nhập';
+                btnSubmit.disabled = false;
+
+                // 4. Xử lý kết quả trả về
+                if (status === 200 && body.code === 1000) {
+                    // Cất Token vào két sắt của trình duyệt (localStorage)
+                    localStorage.setItem('token', body.result.token);
+                    localStorage.setItem('username', user);
+
+                    // Hiện thông báo thành công màu xanh trước khi chuyển trang (tùy chọn)
+                    showToast('Đăng nhập thành công! Đang chuyển hướng...', 'success');
+
+                    setTimeout(() => {
+                        window.location.href = "/index.html";
+                    }, 1000);
+
+                } else {
+                    // Nếu thất bại (Sai mật khẩu, user không tồn tại...) - Thay vì alert, gọi showToast
+                    showToast('Đăng nhập thất bại: ' + (body.message || 'Lỗi không xác định'));
+                }
+            })
+            .catch(error => {
+                btnSubmit.innerHTML = 'Đăng nhập';
+                btnSubmit.disabled = false;
+                console.error('Lỗi kết nối:', error);
+
+                // Thay vì alert, gọi showToast
+                showToast('Không thể kết nối đến Server Backend!');
+            });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bleb — Blog Platform</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet"/>
+  <link rel="stylesheet" type="text/css" href="/assets/css/main.css"/>
+</head>
+<body>
+
+<div id="navbar-container"></div>
+
+<div id="p-home">
+  <div id="hero-container"></div>
+
+  <div id="main-body">
+    <div class="container-xl">
+      <div class="row g-4">
+        <div class="col-lg-8">
+          <div class="toolbar">
+            <p class="pcount" id="pcount"></p>
+            <div class="d-flex align-items-center gap-2">
+              <label for="sort-sel"
+                     style="font-size:.79rem;color:var(--t3);white-space:nowrap;">Sort:</label>
+              <select class="sort-sel" id="sort-sel">
+                <option value="createdAt,desc">Newest First</option>
+                <option value="createdAt,asc">Oldest First</option>
+                <option value="title,asc">Title A–Z</option>
+                <option value="title,desc">Title Z–A</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="active-filter-banner" class="mb-4" style="display: none;"></div>
+          <div id="post-list"></div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="sw">
+            <div class="sw-ttl" style="font-weight: 600; margin-bottom: 15px;">Stories from all interests</div>
+
+            <div id="sb-categories" class="d-flex flex-wrap gap-2">
+              <a href="#" class="cat-pill active">Technology</a>
+              <a href="#" class="cat-pill">Programming</a>
+              <a href="#" class="cat-pill">Hollywood</a>
+              <a href="#" class="cat-pill">Film Making</a>
+              <a href="#" class="cat-pill">Social Media</a>
+              <a href="#" class="cat-pill">Cooking</a>
+              <a href="#" class="cat-pill">Finances</a>
+              <a href="#" class="cat-pill">Travel</a>
+            </div>
+          </div>
+
+          <div class="sw mt-5">
+            <div class="sw-ttl" style="font-weight: 600; margin-bottom: 15px;">Trending ↗</div>
+            <div id="sb-trending">
+            </div>
+          </div>
+
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="p-categories" style="display:none;">
+  <div class="container-xl">
+    <div class="ph">
+      <div class="ph-g">◈</div>
+      <h2 class="ph-h">Categories</h2>
+      <p class="ph-s">Browse all categories and discover great reads.</p>
+      <div class="row g-3 mt-4" id="cat-grid" style="text-align:left;"></div>
+      <button class="ph-back" data-page="home">← Back to Home</button>
+    </div>
+  </div>
+</div>
+
+<div id="p-tags" style="display:none;">
+  <div class="container-xl">
+    <div class="ph">
+      <div class="ph-g">◈</div>
+      <h2 class="ph-h">Tags</h2>
+      <p class="ph-s">Explore all topics and find what interests you.</p>
+      <div class="mt-4" id="tags-grid"></div>
+      <button class="ph-back" data-page="home">← Back to Home</button>
+    </div>
+  </div>
+</div>
+
+<div id="footer-container"></div>
+<div id="toasts"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
+<script src="/assets/js/app.js"></script>
+<script src="/assets/js/posts.js"></script>
+<script src="/assets/js/sidebar.js"></script>
+<script src="/assets/js/filters.js"></script>
+<script src="/assets/js/pages.js"></script>
+<script src="/assets/js/auth.js"></script>
+<script src="/assets/js/nav.js"></script>
+<script src="/assets/js/init.js"></script>
+
+<script>
+  $(document).ready(function() {
+    // 1. Tải Hero và Footer
+    $('#hero-container').load('/fragments/hero.html');
+    $('#footer-container').load('/fragments/footer.html');
+
+    // 2. Tải Navbar và CHỜ tải xong mới chạy logic Auth
+    $('#navbar-container').load('/fragments/navbar.html', function(response, status, xhr) {
+      if (status == "error") {
+        console.error("Lỗi tải Navbar: " + xhr.status + " " + xhr.statusText);
+        return;
+      }
+
+      // Cập nhật giao diện Đăng nhập/Khách ngay khi Navbar vừa xuất hiện trên web
+      if (typeof updateNavAuth === 'function') {
+        updateNavAuth();
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

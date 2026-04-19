@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Edit Profile — Inkwell</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@1,6..72,400;1,6..72,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/assets/css/main.css"/>
+
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        body { background-color: #0b0e14 !important; color: #e0e5f5; font-family: 'Inter', sans-serif; margin: 0; }
+        ::-webkit-scrollbar { display: none; }
+        html { -ms-overflow-style: none; scrollbar-width: none; }
+        #navbar-container { position: fixed; top: 0; width: 100%; z-index: 1050; background: #0b0e14; border-bottom: 1px solid rgba(66,72,85,0.15);}
+        .no-underline { text-decoration: none !important; }
+    </style>
+</head>
+<body class="overflow-x-hidden bg-background no-global-search">
+
+<div id="navbar-container"></div>
+
+<div id="dashboard-sidebar-container"></div>
+
+<main class="md:ml-64 px-6 md:px-12 pb-20 min-h-screen" style="padding-top: 100px;">
+    <div class="max-w-4xl mx-auto w-full">
+        <header class="mb-12 border-b border-[#424855]/20 pb-4">
+            <h1 class="font-['Newsreader'] text-4xl md:text-5xl italic font-bold text-[#e0e5f5] tracking-tight mb-2">Edit Profile</h1>
+            <p class="text-[#a5abba] font-['Inter']">Manage your public identity and editorial presence.</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+            <div class="md:col-span-4 flex flex-col items-center">
+                <div class="bg-[#10131b] p-8 rounded-xl w-full flex flex-col items-center text-center shadow-[0_20px_40px_rgba(0,0_0,0.3)]">
+                    <div class="relative group">
+                        <div class="h-40 w-40 rounded-full overflow-hidden border-4 border-[#ac8aff]/20 ring-4 ring-[#0b0e14] shadow-2xl">
+                            <img id="avatar-img" alt="Profile image" class="w-full h-full object-cover" src="https://placehold.co/400x400/151a22/a5abba?text=Avatar">
+                        </div>
+                        <label class="absolute bottom-1 right-1 h-10 w-10 bg-[#7C3AED] rounded-full flex items-center justify-center cursor-pointer shadow-lg hover:brightness-110 transition-all group-hover:scale-110 duration-200">
+                            <span class="material-symbols-outlined text-white text-xl">upload</span>
+                            <input id="avatar-upload" class="hidden" type="file" accept="image/*">
+                        </label>
+                    </div>
+                    <h3 class="mt-6 font-['Inter'] font-semibold text-[#e0e5f5]">Avatar</h3>
+                    <p class="text-xs text-[#a5abba] mt-2 mb-6">JPG, GIF or PNG. 1MB Max.</p>
+                </div>
+            </div>
+
+            <div class="md:col-span-8">
+                <div class="bg-[#10131b] p-6 md:p-10 rounded-xl shadow-[0_20px_40px_rgba(0,0,0,0.3)] border border-[#424855]/10">
+                    <form id="form-edit-profile" class="space-y-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-['Inter'] font-bold text-[#a5abba] uppercase tracking-[0.1em]">Username</label>
+                                <div class="relative">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[#a5abba] font-bold">@</span>
+                                    <input id="input-username" readonly class="w-full bg-[#0b0e14] border border-[#424855]/30 rounded-lg pl-8 pr-4 py-3 text-sm text-[#a5abba] cursor-not-allowed outline-none" type="text" value="Đang tải...">
+                                </div>
+                                <p class="text-[10px] text-[#a5abba]/50">Username is unique and cannot be changed.</p>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-['Inter'] font-bold text-[#a5abba] uppercase tracking-[0.1em]">Email Address</label>
+                                <input id="input-email" required class="w-full bg-[#000] border border-[#424855]/30 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-all text-white" placeholder="your.email@example.com" type="email">
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-['Inter'] font-bold text-[#a5abba] uppercase tracking-[0.1em]">About Me</label>
+                            <textarea id="input-bio" class="w-full bg-[#000] border border-[#424855]/30 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-all resize-none text-white" rows="5" placeholder="Tell us a little bit about yourself..."></textarea>
+                        </div>
+
+                        <div class="pt-6 flex items-center justify-end border-t border-[#424855]/10 mt-8">
+                            <div class="flex gap-4">
+                                <button id="btn-submit" class="px-10 py-3 bg-gradient-to-r from-[#7C3AED] to-[#ac8aff] text-white font-bold rounded-full text-xs uppercase tracking-widest shadow-lg active:scale-95 transition-all flex items-center gap-2 border-none" type="submit">
+                                    <span>Update Profile</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div id="toasts"></div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/js/app.js"></script>
+<script src="/assets/js/auth.js"></script>
+<script src="/assets/js/nav.js"></script>
+
+<script>
+    let currentAvatarUrl = null; // Lưu URL (cũ hoặc mới từ Cloudinary)
+    let selectedImageFile = null; // Lưu trữ File ảnh vật lý để đẩy lên
+
+    $(document).ready(function() {
+        $('#navbar-container').load('/fragments/navbar.html', function() {
+            if (typeof updateNavAuth === 'function') { updateNavAuth(); }
+        });
+        $('#dashboard-sidebar-container').load('/fragments/dashboard-sidebar.html');
+
+        if (S.isAuth) { loadProfileData(); }
+        else { window.location.href = '/pages/login.html'; }
+    });
+
+    // 1. TẢI THÔNG TIN PROFILE
+    function loadProfileData() {
+        callApi('/users/my-profile', 'GET').done(function(res) {
+            const user = res.result;
+            $('#input-username').val(user.username);
+            $('#input-email').val(user.email || '');
+            $('#input-bio').val(user.bio || '');
+
+            if (user.avatarUrl) {
+                $('#avatar-img').attr('src', user.avatarUrl);
+                currentAvatarUrl = user.avatarUrl; // Giữ lại URL cũ nếu không đổi
+            }
+        }).fail(function() {
+            toast('Không thể tải thông tin cá nhân!');
+        });
+    }
+
+    // 2. KHI CHỌN ẢNH -> TẠO LINK ẢO ĐỂ XEM TRƯỚC & LƯU FILE
+    $('#avatar-upload').on('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (file.size > 2 * 1024 * 1024) { // Cứ thả ga lên 2MB đi, Cloudinary lo
+            alert('Vui lòng chọn ảnh kích thước dưới 2MB!');
+            this.value = ''; return;
+        }
+
+        selectedImageFile = file; // Giữ lại File để lát đẩy lên Cloudinary
+
+        // Tạo link ảo (Blob URL) hiển thị ngay lập tức không cần mã hóa Base64
+        const objectUrl = URL.createObjectURL(file);
+        $('#avatar-img').attr('src', objectUrl);
+    });
+
+    // 3. BẤM UPDATE -> ĐẨY ẢNH LÊN CLOUD TRƯỚC -> RỒI MỚI CẬP NHẬT PROFILE
+    $('#form-edit-profile').on('submit', async function(e) {
+        e.preventDefault();
+
+        const btn = $('#btn-submit');
+        const originalText = btn.html();
+        btn.html('<span class="material-symbols-outlined" style="animation: spin 1s linear infinite;">sync</span> Updating...');
+        btn.prop('disabled', true).css('opacity', '0.7');
+
+        try {
+            // NẾU CÓ CHỌN ẢNH MỚI -> Gọi API Upload
+            if (selectedImageFile) {
+                btn.html('<span class="material-symbols-outlined" style="animation: spin 1s linear infinite;">cloud_upload</span> Uploading Image...');
+
+                const formData = new FormData();
+                formData.append('file', selectedImageFile);
+
+                // Dùng Ajax trần vì hàm callApi mặc định đang gửi JSON
+                const uploadResponse = await $.ajax({
+                    url: 'http://blog-inkwell.onrender.com/upload/image', // Nhớ sửa domain nếu cần
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    }
+                });
+
+                // Lấy URL xịn từ Cloudinary
+                currentAvatarUrl = uploadResponse.result;
+            }
+
+            btn.html('<span class="material-symbols-outlined" style="animation: spin 1s linear infinite;">sync</span> Saving Profile...');
+
+            // Gửi dữ liệu profile (với URL Cloudinary cực nhẹ)
+            const requestBody = {
+                email: $('#input-email').val().trim(),
+                bio: $('#input-bio').val().trim(),
+                avatarUrl: currentAvatarUrl
+            };
+
+            await callApi('/users/my-profile', 'PUT', requestBody);
+
+            // Xóa cache localStorage để Navbar ép load lại ảnh mới
+            localStorage.removeItem('avatarUrl');
+            updateNavAuth();
+            toast('Cập nhật Profile thành công!');
+
+        } catch (error) {
+            let errorMsg = 'Lỗi cập nhật. Vui lòng thử lại sau!';
+            if (error.responseJSON && error.responseJSON.message) {
+                errorMsg = error.responseJSON.message;
+            }
+            alert(errorMsg);
+        } finally {
+            btn.html(originalText);
+            btn.prop('disabled', false).css('opacity', '1');
+            selectedImageFile = null; // Xóa file bộ nhớ
+        }
+    });
+</script>
+</body>
+</html>

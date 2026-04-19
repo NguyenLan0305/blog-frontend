@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký - Blog</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Tùy chỉnh vị trí Toast để luôn nổi trên cùng góc phải */
+        .toast-container {
+            z-index: 1055;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+<div class="toast-container position-fixed top-0 end-0 p-3">
+    <div id="liveToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" id="toastMessage">
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row min-vh-100 align-items-center justify-content-center">
+        <div class="col-12 col-sm-8 col-md-6 col-lg-5">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h2 class="text-center mb-4 fw-bold">Tạo Tài Khoản</h2>
+
+                    <form id="registerForm">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Tên đăng nhập</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Mật khẩu</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="confirmPassword" class="form-label">Xác nhận mật khẩu</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success" id="btnSubmit">Đăng ký ngay</button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-4">
+                        <span class="small text-muted">Đã có tài khoản? <a href="/pages/login.html" class="text-primary text-decoration-none">Đăng nhập</a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Hàm hiển thị Toast
+    function showToast(message, type = 'danger') {
+        const toastElement = document.getElementById('liveToast');
+        const toastBody = document.getElementById('toastMessage');
+        toastBody.textContent = message;
+        toastElement.className = `toast align-items-center text-bg-${type} border-0`;
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+    }
+
+    document.getElementById('registerForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const user = document.getElementById('username').value.trim();
+        const pass = document.getElementById('password').value;
+        const confirmPass = document.getElementById('confirmPassword').value;
+
+        // 1. Kiểm tra mật khẩu
+        if (pass !== confirmPass) {
+            showToast('Mật khẩu xác nhận không khớp. Vui lòng nhập lại!');
+            return;
+        }
+
+        // Đổi trạng thái nút
+        const btnSubmit = document.getElementById('btnSubmit');
+        btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang tạo tài khoản...';
+        btnSubmit.disabled = true;
+
+        // 2. GỌI API ĐĂNG KÝ
+        fetch('https://blog-inkwell.onrender.com/users', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: user, password: pass })
+        })
+            .then(response => response.json().then(data => ({ status: response.status, body: data })))
+            .then(({ status, body }) => {
+                if (status === 200 && body.code === 1000) {
+
+                    // Đăng ký thành công -> Báo thành công -> Gọi API Login ngầm
+                    showToast('Tạo tài khoản thành công! Đang tự động đăng nhập...', 'success');
+                    btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang đăng nhập...';
+
+                    autoLogin(user, pass); // GỌI HÀM AUTO LOGIN
+
+                } else {
+                    // Đăng ký thất bại (Trùng tên, lỗi DB...)
+                    btnSubmit.innerHTML = 'Đăng ký ngay';
+                    btnSubmit.disabled = false;
+                    showToast('Đăng ký thất bại: ' + (body.message || 'Lỗi không xác định'));
+                }
+            })
+            .catch(error => {
+                btnSubmit.innerHTML = 'Đăng ký ngay';
+                btnSubmit.disabled = false;
+                showToast('Không thể kết nối đến Server Backend!');
+            });
+    });
+
+    // 3. HÀM TỰ ĐỘNG ĐĂNG NHẬP SAU KHI ĐĂNG KÝ THÀNH CÔNG
+    function autoLogin(username, password) {
+        fetch('https://blog-inkwell.onrender.com/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: username, password: password })
+        })
+            .then(response => response.json().then(data => ({ status: response.status, body: data })))
+            .then(({ status, body }) => {
+                if (status === 200 && body.code === 1000) {
+                    // Lấy được Token -> Lưu vào Két sắt -> Chuyển sang Home
+                    localStorage.setItem('token', body.result.token);
+                    localStorage.setItem('username', username);
+
+                    setTimeout(() => {
+                        window.location.href = "/pages/home-page.html";
+                    }, 800); // Chờ 0.8s để người dùng kịp nhìn thấy thông báo xanh
+                } else {
+                    // Đề phòng lỗi mạng bất ngờ lúc đăng nhập
+                    showToast('Tài khoản đã tạo nhưng không thể tự đăng nhập. Vui lòng đăng nhập thủ công.', 'warning');
+                    setTimeout(() => { window.location.href = "/pages/login.html"; }, 2000);
+                }
+            })
+            .catch(error => {
+                showToast('Lỗi mạng. Vui lòng chuyển đến trang đăng nhập.', 'warning');
+                setTimeout(() => { window.location.href = "/pages/login.html"; }, 2000);
+            });
+    }
+</script>
+</body>
+</html>

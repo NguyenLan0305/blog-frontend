@@ -1,0 +1,796 @@
+/* =========================================
+   DESIGN TOKENS
+========================================= */
+:root {
+    --bg:          #07080f;
+    --bg-s:        #0c0e18;
+    --bg-card:     #10131f;
+    --bg-card-h:   #161929;
+    --bg-hi:       #1b1f30;
+    --purple:      #7c6ff7;
+    --purple-lt:   #9f7aea;
+    --purple-glow: rgba(124,111,247,.22);
+    --gold:        #e9a84c;
+    --teal:        #3ecfb0;
+    --teal-bg:     rgba(62,207,176,.09);
+    --t1:          #edf0f7;
+    --t2:          #8b91a7;
+    --t3:          #525870;
+    --bd:          rgba(255,255,255,.055);
+    --bd-p:        rgba(124,111,247,.35);
+    --r:           14px;
+    --r-s:         8px;
+    --red: #ef4444;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+    background: var(--bg);
+    color: var(--t1);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--bg-hi); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--purple); }
+
+a { text-decoration: none; }
+
+/* =========================================
+   NAVBAR & AUTH HEADER (BẢN NÂNG CẤP)
+========================================= */
+
+
+/* Khi thẻ body có class no-global-search, ẩn toàn bộ các khối search-wrapper đi */
+body.no-global-search .search-wrapper {
+    visibility: hidden !important;
+}
+
+/* Riêng trên Mobile, dùng display:none để menu rút gọn lại cho đẹp, không bị trống chỗ */
+@media (max-width: 991px) {
+    body.no-global-search .search-wrapper {
+        display: none !important;
+    }
+}
+
+#navbar {
+    background: rgba(7,8,15,.9);
+    backdrop-filter: blur(22px);
+    border-bottom: 1px solid var(--bd);
+    position: sticky;
+    top: 0;
+    z-index: 1040;
+    padding: 0.5rem 0;
+}
+
+.brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.45rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #fff 30%, var(--purple) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    cursor: pointer;
+    letter-spacing: -.3px;
+}
+
+/* 1. Thanh tìm kiếm (Dài hơn) */
+.nav-search-box {
+    background-color: var(--bg-hi);
+    border-radius: 24px;
+    padding: 9px 18px;
+    display: flex;
+    align-items: center;
+    width: 280px; /* Dài hơn mặc định */
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s, border-color 0.3s;
+    border: 1px solid transparent;
+}
+.nav-search-box:focus-within {
+    width: 380px; /* Giãn ra khi click */
+    background-color: var(--bg-card-h);
+    border-color: var(--bd-p);
+    box-shadow: 0 0 0 3px rgba(124,111,247,.15);
+}
+.nav-search-box input {
+    border: none;
+    background: transparent;
+    outline: none;
+    width: 100%;
+    margin-left: 10px;
+    font-size: 0.95rem;
+    color: var(--t1);
+}
+.nav-search-box input::placeholder {
+    color: var(--t3);
+}
+.nav-search-box svg {
+    color: var(--t2);
+}
+
+/* 2. Các nút icon (Write, Bell có vòng tròn) */
+.nav-action-link {
+    color: var(--t2);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.95rem;
+    transition: color 0.2s, transform 0.2s;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+}
+.nav-action-link:hover {
+    color: var(--t1);
+}
+
+/* Nút chuông thông báo có vòng tròn */
+.nav-icon-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--bd);
+    color: var(--t2);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+.nav-icon-circle:hover {
+    background-color: var(--bg-hi);
+    color: var(--t1);
+    border-color: var(--bd-p);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* 3. Avatar mặc định (Màu sắc nổi & Vòng tròn kép) */
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    /* Màu Gradient rực rỡ */
+    background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    /* Hiệu ứng vòng tròn kép (Double Ring) */
+    box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px rgba(124,111,247, 0.6);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.avatar-dropdown:hover .avatar {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--purple);
+}
+
+/* 4. Hover Dropdown Menu cho Avatar (Premium UI) */
+.avatar-dropdown {
+    position: relative;
+    cursor: pointer;
+    padding: 5px 0;
+}
+.avatar-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: var(--bg-card);
+    border-radius: 12px;
+    box-shadow: 0 18px 45px rgba(0,0,0,.8);
+    min-width: 230px;
+    padding: 8px 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(15px) scale(0.95);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1050;
+    border: 1px solid var(--bd);
+    transform-origin: top right;
+}
+/* Mũi tên chỉ lên của Menu */
+.avatar-dropdown-menu::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    right: 18px;
+    width: 12px;
+    height: 12px;
+    background: var(--bg-card);
+    border-top: 1px solid var(--bd);
+    border-left: 1px solid var(--bd);
+    transform: rotate(45deg);
+}
+
+.avatar-dropdown:hover .avatar-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(5px) scale(1);
+}
+
+/* Header thông tin User trong Menu */
+.dd-user-info {
+    padding: 12px 20px 8px;
+    border-bottom: 1px solid var(--bd);
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 1;
+}
+.dd-user-info .d-role {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--purple);
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+.dd-user-info .d-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--t1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Các link trong Menu */
+.avatar-dropdown-menu a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 20px;
+    color: var(--t2);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.15s;
+    position: relative;
+    z-index: 1;
+}
+.avatar-dropdown-menu a svg {
+    opacity: 0.7;
+    transition: opacity 0.15s;
+}
+.avatar-dropdown-menu a:hover {
+    background-color: rgba(255,255,255,.04);
+    color: var(--t1);
+}
+.avatar-dropdown-menu a:hover svg {
+    opacity: 1;
+}
+.avatar-dropdown-menu hr {
+    border-color: var(--bd);
+    margin: 6px 0;
+}
+.avatar-dropdown-menu .text-danger:hover {
+    background-color: rgba(248,113,113,.08);
+    color: #f87171 !important;
+}
+
+/* Viên thuốc đăng ký / Nút chung */
+.btn-pill {
+    border-radius: 50px;
+    padding: 0.45rem 1.4rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Offcanvas Menu (Mobile) */
+.offcanvas { background: var(--bg-s) !important; border-color: var(--bd) !important; }
+.offcanvas-header { border-bottom: 1px solid var(--bd); }
+.offcanvas-title { font-family: 'Playfair Display',serif; color: var(--t1); }
+.btn-close { filter: invert(1) brightness(.55); }
+.mb-nav-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: .68rem 0;
+    border-bottom: 1px solid var(--bd);
+    border-top: none; border-left: none; border-right: none;
+    background: none;
+    color: var(--t2);
+    font-size: .95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color .15s;
+}
+.mb-nav-btn:hover, .mb-nav-btn.is-active { color: var(--purple); }
+
+/* =========================================
+   HERO
+========================================= */
+#hero {
+    background: linear-gradient(135deg, #080a1c 0%, #0e0b2a 50%, #080d1c 100%);
+    border-bottom: 1px solid var(--bd);
+    padding: 3.5rem 0 2.8rem;
+    overflow: hidden;
+    position: relative;
+}
+#hero::before {
+    content: '';
+    position: absolute;
+    top: -90px; left: -90px;
+    width: 360px; height: 360px;
+    background: radial-gradient(circle, rgba(124,111,247,.11) 0%, transparent 70%);
+    pointer-events: none;
+}
+#hero::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; right: -60px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(62,207,176,.07) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    background: rgba(124,111,247,.1);
+    border: 1px solid rgba(124,111,247,.22);
+    color: var(--purple);
+    border-radius: 100px;
+    padding: .22rem .85rem;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    margin-bottom: 1.1rem;
+}
+.eyebrow-dot {
+    width: 6px; height: 6px;
+    background: var(--purple);
+    border-radius: 50%;
+    animation: blink 2.2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.75)} }
+
+.hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.85rem, 4.5vw, 2.9rem);
+    font-weight: 700;
+    line-height: 1.18;
+    letter-spacing: -.02em;
+    color: var(--t1);
+    margin-bottom: .7rem;
+}
+.hero-title .hi {
+    background: linear-gradient(135deg, var(--purple) 0%, #c4b5fd 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.hero-sub { color: var(--t2); font-size: .975rem; max-width: 480px; line-height: 1.7; margin-bottom: 1.75rem; }
+
+.hero-stats { display: flex; gap: 2rem; }
+.sv { font-family: 'Playfair Display',serif; font-size: 1.55rem; font-weight: 700; color: var(--t1); line-height: 1; }
+.sl { font-size: .72rem; color: var(--t3); margin-top: .2rem; letter-spacing: .06em; }
+
+.deco-wrap { position: relative; width: 270px; height: 210px; }
+.dc { position: absolute; border: 1px solid rgba(124,111,247,.13); border-radius: 10px; background: rgba(124,111,247,.025); }
+.deco-card {
+    position: absolute; top: 28px; left: 28px;
+    width: 210px; height: 150px;
+    background: linear-gradient(135deg,rgba(124,111,247,.11),rgba(62,207,176,.055));
+    border-radius: 16px; border: 1px solid rgba(124,111,247,.2);
+    padding: 1rem; display: flex; flex-direction: column; gap: .5rem;
+}
+.dl { background: rgba(255,255,255,.12); border-radius: 4px; }
+.dt { display: flex; gap: .5rem; margin-top: auto; }
+
+/* =========================================
+   FILTER PANEL
+========================================= */
+#main-body { padding: 2.5rem 0 4rem; }
+
+.filter-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--bd);
+    border-radius: var(--r);
+    padding: 1.5rem;
+    margin-bottom: 1.75rem;
+}
+.flbl {
+    font-size: .68rem; font-weight: 700;
+    letter-spacing: .11em; text-transform: uppercase;
+    color: var(--t3); margin-bottom: .7rem;
+}
+
+.cat-tabs { display: flex; flex-wrap: wrap; gap: .35rem; }
+.cat-btn {
+    background: none;
+    border: 1px solid var(--bd);
+    color: var(--t2);
+    border-radius: 100px;
+    padding: .3rem .85rem;
+    font-size: .8rem; font-weight: 500;
+    cursor: pointer; white-space: nowrap;
+    transition: all .18s;
+}
+.cat-btn:hover { background: rgba(255,255,255,.045); border-color: rgba(255,255,255,.13); color: var(--t1); }
+.cat-btn.on {
+    background: linear-gradient(135deg,var(--purple),var(--purple-lt));
+    border-color: transparent; color: #fff; font-weight: 600;
+    box-shadow: 0 3px 12px rgba(124,111,247,.33);
+}
+
+.fsep { height: 1px; background: var(--bd); margin: 1.15rem 0; }
+
+.tag-chips { display: flex; flex-wrap: wrap; gap: .35rem; }
+.tc-btn {
+    background: none;
+    border: 1px solid var(--bd);
+    color: var(--t3);
+    border-radius: var(--r-s);
+    padding: .22rem .6rem;
+    font-size: .74rem; font-family: 'JetBrains Mono',monospace;
+    cursor: pointer; transition: all .18s;
+}
+.tc-btn:hover { border-color: var(--teal); color: var(--teal); }
+.tc-btn.on { background: var(--teal-bg); border-color: var(--teal); color: var(--teal); box-shadow: 0 0 10px rgba(62,207,176,.13); }
+
+/* =========================================
+   TOOLBAR
+========================================= */
+.toolbar {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap; gap: .75rem;
+    margin-bottom: 1.15rem;
+}
+.pcount { font-size: .82rem; color: var(--t3); margin: 0; }
+.pcount strong { color: var(--t1); }
+
+.sort-sel {
+    background: var(--bg-hi); border: 1px solid var(--bd);
+    color: var(--t2); border-radius: var(--r-s);
+    padding: .32rem 2rem .32rem .7rem;
+    font-size: .8rem; font-family: 'Inter',sans-serif;
+    appearance: none; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23525870'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right .65rem center;
+    transition: all .18s;
+}
+.sort-sel:focus { outline: none; border-color: var(--purple); color: var(--t1); }
+
+/* =========================================
+   POST CARD
+========================================= */
+.post-card {
+    background: var(--bg-card);
+    border: 1px solid var(--bd);
+    border-radius: var(--r);
+    padding: 1.65rem;
+    margin-bottom: .95rem;
+    cursor: pointer;
+    transition: all .24s cubic-bezier(.4,0,.2,1);
+    position: relative; overflow: hidden;
+}
+.post-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg,var(--purple),var(--purple-lt),var(--teal));
+    opacity: 0; transition: opacity .24s ease;
+}
+.post-card:hover {
+    background: var(--bg-card-h);
+    border-color: rgba(124,111,247,.22);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 36px rgba(0,0,0,.42), 0 0 0 1px rgba(124,111,247,.08);
+}
+.post-card:hover::before { opacity: 1; }
+
+.pc-meta {
+    display: flex; align-items: center;
+    flex-wrap: wrap; gap: .65rem; margin-bottom: .8rem;
+}
+.cat-badge {
+    background: rgba(124,111,247,.1);
+    border: 1px solid rgba(124,111,247,.2);
+    color: var(--purple);
+    border-radius: 6px; padding: .18rem .58rem;
+    font-size: .69rem; font-weight: 700;
+    letter-spacing: .05em; text-transform: uppercase;
+}
+.pc-date, .pc-rt {
+    font-size: .76rem; color: var(--t3);
+    display: flex; align-items: center; gap: .28rem;
+}
+.pc-rt { margin-left: auto; }
+
+.pc-title {
+    font-family: 'Playfair Display',serif;
+    font-size: 1.28rem; font-weight: 700;
+    color: var(--t1); line-height: 1.35;
+    margin-bottom: .55rem; letter-spacing: -.01em;
+    transition: color .2s;
+}
+.post-card:hover .pc-title { color: #c4b5fd; }
+
+.pc-author {
+    font-size: .79rem; color: var(--t3);
+    display: flex; align-items: center; gap: .4rem;
+    margin-bottom: .8rem;
+}
+.ac {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: linear-gradient(135deg,var(--purple),var(--purple-lt));
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: .6rem; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+
+.pc-exc {
+    color: var(--t2); font-size: .895rem; line-height: 1.72;
+    margin-bottom: 1.15rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+.pc-foot {
+    display: flex; align-items: center; flex-wrap: wrap; gap: .42rem;
+}
+.tag-pill {
+    background: rgba(255,255,255,.038);
+    border: 1px solid var(--bd); color: var(--t3);
+    border-radius: 6px; padding: .14rem .52rem;
+    font-size: .7rem; font-family: 'JetBrains Mono',monospace;
+}
+.tag-pill::before { content: '#'; opacity: .55; }
+
+.read-more {
+    margin-left: auto; color: var(--t3); font-size: .77rem;
+    display: flex; align-items: center; gap: .3rem;
+    transition: all .2s; pointer-events: none;
+}
+.post-card:hover .read-more { color: var(--purple); gap: .55rem; }
+
+/* =========================================
+   SKELETON
+========================================= */
+.skel-card {
+    background: var(--bg-card); border: 1px solid var(--bd);
+    border-radius: var(--r); padding: 1.65rem; margin-bottom: .95rem;
+}
+.sk {
+    display: block; border-radius: 6px;
+    background: linear-gradient(90deg,var(--bg-hi) 25%,rgba(255,255,255,.038) 50%,var(--bg-hi) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.7s infinite;
+}
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+/* =========================================
+   EMPTY STATE
+========================================= */
+.empty {
+    text-align: center; padding: 3.5rem 1.5rem;
+    color: var(--t3);
+}
+.empty-g { font-size: 2.8rem; opacity: .3; margin-bottom: 1rem; }
+
+/* =========================================
+   SIDEBAR WIDGETS
+========================================= */
+.sw {
+    background: var(--bg-card); border: 1px solid var(--bd);
+    border-radius: var(--r); padding: 1.2rem; margin-bottom: 1.2rem;
+}
+.sw-ttl {
+    font-size: .68rem; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--t3); padding-bottom: .7rem;
+    border-bottom: 1px solid var(--bd); margin-bottom: .9rem;
+}
+
+/* Style cho Category dạng Pill */
+.cat-pill {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #a0a0b0;
+    border-radius: 100px;
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+/* Hiệu ứng khi hover chuột */
+.cat-pill:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+}
+
+/* Trạng thái đang được chọn (Active) */
+.cat-pill.active {
+    background-color: var(--purple);
+    color: #ffffff;
+    border-color: var(--purple);
+}
+
+.sw.mt-5 {
+    margin-top: 2.5rem !important;
+}
+
+.tr-item {
+    display: flex; gap: .7rem; padding: .55rem 0;
+    border-bottom: 1px solid var(--bd); cursor: pointer; transition: all .14s;
+}
+.tr-item:last-child { border-bottom: none; }
+.tr-item:hover .tr-ttl { color: var(--purple); }
+
+.tr-n {
+    font-family: 'Playfair Display',serif;
+    font-size: 1.45rem; font-weight: 700;
+    color: var(--bg-hi); line-height: 1;
+    min-width: 1.9rem; text-align: center; flex-shrink: 0;
+}
+.tr-ttl { font-size: .8rem; font-weight: 500; color: var(--t2); line-height: 1.45; transition: color .14s; }
+.tr-meta { font-size: .69rem; color: var(--t3); margin-top: .18rem; }
+
+.sb-tag {
+    display: inline-flex; align-items: center; gap: .22rem;
+    background: var(--bg-hi); border: 1px solid var(--bd);
+    color: var(--t2); border-radius: 6px;
+    padding: .27rem .58rem; font-size: .74rem;
+    font-family: 'JetBrains Mono',monospace;
+    cursor: pointer; margin: .22rem; transition: all .15s;
+}
+.sb-tag:hover { border-color: var(--teal); color: var(--teal); }
+.sb-tag.on { border-color: var(--teal); color: var(--teal); background: var(--teal-bg); }
+
+/* Newsletter widget */
+.sw-nl {
+    background: linear-gradient(135deg,#161929,#130f26);
+    border-color: rgba(124,111,247,.12);
+}
+.sw-nl .sw-ttl { color: var(--purple); border-color: rgba(124,111,247,.15); }
+.nl-txt { font-size: .8rem; color: var(--t2); line-height: 1.6; margin-bottom: 1rem; }
+.nl-in {
+    width: 100%; background: var(--bg-hi);
+    border: 1px solid var(--bd); border-radius: var(--r-s);
+    padding: .42rem .7rem; font-size: .8rem;
+    color: var(--t1); font-family: 'Inter',sans-serif;
+    outline: none; margin-bottom: .5rem; transition: border-color .18s;
+}
+.nl-in:focus { border-color: var(--purple); }
+.nl-in::placeholder { color: var(--t3); }
+.nl-btn {
+    width: 100%;
+    background: linear-gradient(135deg,var(--purple),var(--purple-lt));
+    border: none; border-radius: var(--r-s);
+    padding: .44rem; font-size: .82rem; font-weight: 600;
+    color: #fff; cursor: pointer; transition: opacity .18s;
+}
+.nl-btn:hover { opacity: .88; }
+
+/* =========================================
+   PLACEHOLDER PAGES
+========================================= */
+.ph {
+    text-align: center; padding: 5rem 1.5rem;
+}
+.ph-g { font-size: 2.5rem; opacity: .28; margin-bottom: 1rem; }
+.ph-h {
+    font-family: 'Playfair Display',serif;
+    font-size: 1.75rem; color: var(--t1); margin-bottom: .5rem;
+}
+.ph-s { font-size: .9rem; color: var(--t3); }
+.ph-back {
+    margin-top: 1.75rem;
+    background: linear-gradient(135deg,var(--purple),var(--purple-lt));
+    border: none; border-radius: var(--r-s);
+    padding: .52rem 1.3rem; color: #fff;
+    font-size: .875rem; font-weight: 600; cursor: pointer; transition: opacity .18s;
+}
+.ph-back:hover { opacity: .85; }
+
+/* Category cards grid */
+.cat-card {
+    padding: 1.5rem; border-radius: var(--r);
+    cursor: pointer; transition: transform .2s;
+}
+.cat-card:hover { transform: translateY(-3px); }
+
+/* =========================================
+   FOOTER
+========================================= */
+footer {
+    background: var(--bg-s);
+    border-top: 1px solid var(--bd);
+    padding: 1.4rem 0; text-align: center;
+}
+.ft { font-size: .82rem; color: var(--t3); margin: 0; }
+.ft span { color: var(--purple); font-weight: 600; }
+
+/* =========================================
+   TOAST
+========================================= */
+#toasts {
+    position: fixed; bottom: 1.5rem; right: 1.5rem;
+    z-index: 9999; display: flex; flex-direction: column; gap: .5rem;
+    pointer-events: none;
+}
+.toast-item {
+    background: var(--bg-hi);
+    border: 1px solid rgba(124,111,247,.28);
+    border-radius: 12px; padding: .7rem 1.1rem;
+    color: var(--t1); font-size: .875rem; font-weight: 500;
+    box-shadow: 0 8px 30px rgba(0,0,0,.55);
+    max-width: 340px; display: flex; align-items: center; gap: .6rem;
+    animation: toastIn .28s ease;
+}
+.toast-dot {
+    width: 8px; height: 8px; background: var(--purple);
+    border-radius: 50%; flex-shrink: 0;
+    box-shadow: 0 0 8px var(--purple-glow);
+}
+
+@keyframes toastIn  { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeDown { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+
+/* CSS cho khung Gợi ý */
+.search-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: var(--bg-card);
+    border: 1px solid var(--bd);
+    border-radius: 12px;
+    margin-top: 8px;
+    padding: 8px 0;
+    z-index: 1060;
+    display: none; /* Mặc định ẩn */
+}
+.sd-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--t3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 4px 16px 8px;
+}
+.sd-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    color: var(--t1);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.sd-item:hover {
+    background-color: rgba(255,255,255,0.05);
+    color: var(--purple);
+}
+.sd-item svg { color: var(--t2); flex-shrink: 0; }
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+@media (max-width: 768px) {
+    #hero { padding: 2.2rem 0 1.8rem; }
+    .hero-stats { gap: 1.25rem; }
+    .post-card { padding: 1.2rem; }
+    .pc-title { font-size: 1.1rem; }
+    .pc-rt { margin-left: 0; }
+    .toolbar { flex-direction: column; align-items: flex-start; }
+}

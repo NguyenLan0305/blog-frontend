@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>BlogAdmin | Category & Tag Management</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400;700&display=swap" rel="stylesheet"/>
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "admin-bg": "#F5F5F3",
+                        "admin-side": "#2D3432",
+                        "admin-primary": "#ac8aff"
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F5F5F3; margin: 0; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400; vertical-align: middle; }
+        ::-webkit-scrollbar { display: none; }
+        html { -ms-overflow-style: none; scrollbar-width: none; }
+
+        aside { position: fixed; left: 0; top: 0; height: 100vh; width: 220px; background-color: #2D3432; z-index: 1100; }
+        header { position: fixed; top: 0; right: 0; left: 220px; height: 64px; background: white; border-bottom: 1px solid rgba(0,0,0,0.05); z-index: 1000; display: flex; align-items: center; padding: 0 32px; justify-content: space-between; }
+        main { margin-left: 220px; padding-top: 84px !important; min-height: 100vh; }
+
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 14px 20px; color: #ADB3B0; text-decoration: none; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; transition: all 0.2s; }
+        .nav-item:hover, .nav-item.active { color: white; background: rgba(172, 138, 255, 0.08); border-right: 4px solid #ac8aff; }
+
+        #catModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); z-index: 2000; align-items: center; justify-content: center; }
+        #catModal.active { display: flex; }
+
+        .tag-pill { transition: all 0.2s; border: 1px solid rgba(0,0,0,0.05); position: relative; cursor: default; }
+        .edit-mode .tag-pill { cursor: pointer; border-color: #ac8aff; }
+        .edit-mode .tag-pill:hover { background: #fdfaff; }
+
+        /* Toast Style */
+        #toast { visibility: hidden; min-width: 250px; background-color: #2D3432; color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 3000; right: 30px; bottom: 30px; font-size: 14px; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        #toast.show { visibility: visible; -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+        @-webkit-keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @-webkit-keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+    </style>
+</head>
+<body>
+
+<div id="toast">Saved successfully!</div>
+<div id="sidebar-placeholder"></div>
+
+<header>
+    <h2 class="text-lg font-bold text-[#2D3432] uppercase tracking-tight">Categories & Tags</h2>
+</header>
+
+<main class="p-10">
+    <div class="flex justify-between items-end mb-10">
+        <div class="max-w-xl">
+            <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-2 font-bold">Taxonomy Control</p>
+            <h3 class="text-3xl font-light tracking-tight text-slate-800 italic">Organize the architecture of your digital archive.</h3>
+        </div>
+        <button onclick="toggleCatModal(true)" class="bg-[#2D3432] text-white px-8 py-3 rounded-lg font-bold text-xs flex items-center gap-2 hover:bg-black transition-all shadow-lg uppercase tracking-widest">
+            <span class="material-symbols-outlined text-[18px]">add</span> New Category
+        </button>
+    </div>
+
+    <div class="flex items-center justify-between mb-8 border-b border-slate-200 pb-2">
+        <h3 class="font-mono text-xs uppercase tracking-widest text-slate-500 font-bold">Active Categories</h3>
+    </div>
+    <div id="category-list" class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16"></div>
+
+    <section class="mb-16">
+        <div class="flex items-center justify-between mb-8 border-b border-slate-200 pb-2">
+            <h3 class="font-mono text-xs uppercase tracking-widest text-slate-500 font-bold">Tag Index</h3>
+            <div class="flex items-center gap-4">
+                <input id="tag-search" class="bg-transparent border-none focus:ring-0 text-xs font-mono w-40 placeholder:text-slate-300" placeholder="Search tags..." type="text"/>
+                <button id="btn-edit-tags" onclick="toggleTagEditMode()" class="text-[10px] uppercase tracking-widest font-bold text-slate-800 underline underline-offset-4">Edit Tags</button>
+            </div>
+        </div>
+
+        <div id="tag-container" class="bg-white border border-slate-100 p-10 rounded-sm shadow-sm">
+            <div id="tag-list" class="flex flex-wrap gap-3 mb-12"></div>
+
+            <div class="pt-8 border-t border-slate-100">
+                <form id="form-create-tag" class="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+                    <div class="space-y-2">
+                        <label class="font-mono text-[9px] uppercase tracking-widest text-slate-400 block font-bold">New Tag Name</label>
+                        <input id="new-tag-name" required class="w-full bg-slate-50 border border-slate-100 px-4 py-3 text-sm font-mono focus:outline-none focus:border-[#ac8aff] transition-colors" placeholder="type_tag_name_here..." type="text"/>
+                    </div>
+                    <button type="submit" class="bg-[#2D3432] text-white px-10 py-3.5 text-[11px] uppercase tracking-[0.2em] font-bold hover:bg-black transition-all">Register Tag</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="md:col-span-2 bg-white border border-slate-100 p-8 flex items-stretch gap-8 rounded-sm shadow-sm">
+            <div class="w-1/3 bg-slate-100 overflow-hidden rounded-sm relative">
+                <img id="rp-image" src="" alt="" class="absolute inset-0 w-full h-full object-cover opacity-90 hidden">
+                <div id="rp-placeholder" class="absolute inset-0 flex items-center justify-center text-slate-300"><span class="material-symbols-outlined text-4xl">image</span></div>
+            </div>
+            <div class="w-2/3 flex flex-col justify-center">
+                <h4 class="font-mono text-[10px] uppercase tracking-widest text-[#ac8aff] mb-4 font-bold flex items-center gap-2">Featured Read</h4>
+                <h3 id="rp-title" class="text-2xl font-bold text-slate-800 mb-2 line-clamp-2 italic">...</h3>
+                <p id="rp-author" class="text-xs text-slate-400 font-mono mb-6">@author</p>
+                <a id="rp-link" href="#" target="_blank" class="text-[10px] font-bold uppercase tracking-widest underline underline-offset-8 text-slate-800 hover:text-[#ac8aff] transition-colors hidden">Read Article</a>
+            </div>
+        </div>
+
+        <div class="bg-[#2D3432] text-white p-8 flex flex-col justify-between rounded-sm shadow-lg">
+            <div>
+                <span class="material-symbols-outlined text-4xl mb-4 font-light text-[#ac8aff]">health_metrics</span>
+                <h4 class="text-xl font-light tracking-tight mb-2">Archive Health</h4>
+                <p id="health-desc" class="text-white/50 text-xs leading-relaxed">...</p>
+            </div>
+            <div class="mt-8 border-t border-white/10 pt-4">
+                <span class="tracking-widest font-mono text-[10px] text-slate-400">LEAST USED TAGS</span>
+                <div id="unused-tags-list" class="flex flex-wrap gap-2 mt-3"></div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div id="catModal" onclick="if(event.target == this) toggleCatModal(false)">
+    <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden transform transition-all scale-95 opacity-0 duration-200" id="modalContent">
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+            <h3 class="font-bold text-lg text-[#2D3432] uppercase tracking-tight">Register New Category</h3>
+            <button onclick="toggleCatModal(false)" class="text-slate-400 hover:text-slate-600"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <form id="form-create-cat" class="p-8 space-y-6">
+            <div class="space-y-2">
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Category Name</label>
+                <input id="new-cat-name" type="text" required class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none font-medium focus:border-[#ac8aff]" placeholder="e.g. Technology">
+            </div>
+            <button type="submit" class="w-full py-3 bg-[#2D3432] text-white rounded-xl text-[11px] font-black hover:bg-black transition-all uppercase tracking-widest shadow-lg">Register</button>
+        </form>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+    const API_BASE = "https://blog-inkwell.onrender.com";
+    const token = localStorage.getItem('token');
+
+    // Cấu hình Header an toàn hơn, chỉ đính kèm Bearer nếu có token
+    const authHeaders = { 'Content-Type': 'application/json' };
+    if (token) {
+        authHeaders['Authorization'] = 'Bearer ' + token;
+    }
+
+    let isTagEditMode = false;
+    let allTags = [];
+
+    $(document).ready(function() {
+        $("#sidebar-placeholder").load("/fragments/admin_sidebar.html", function() {
+            $("#nav-categories").addClass("active");
+        });
+        fetchCategories();
+        fetchTags();
+        fetchRandomPost();
+
+        $('#form-create-cat').on('submit', createCategory);
+        $('#form-create-tag').on('submit', createTag);
+    });
+
+    function showToast() {
+        const x = document.getElementById("toast");
+        x.className = "show";
+        setTimeout(() => { x.className = x.className.replace("show", ""); }, 3000);
+    }
+
+    // Hàm chuyên trị bắt lỗi và hiển thị cho bạn biết
+    function handleError(err, action) {
+        console.error(`Lỗi khi ${action}:`, err);
+        const errorMsg = err.responseJSON?.message || err.statusText || "Lỗi không xác định từ Server (Kiểm tra lại Terminal Spring Boot)";
+        alert(`Không thể ${action}!\nChi tiết lỗi: ${errorMsg}`);
+    }
+
+    /* --- CATEGORIES LOGIC --- */
+    function fetchCategories() {
+        $.ajax({
+            url: `${API_BASE}/categories`, type: 'GET',
+            success: function(res) {
+                const cats = res.result || [];
+                const $list = $('#category-list').empty();
+                cats.forEach(cat => {
+                    $list.append(`
+                        <div class="bg-white border border-slate-100 p-8 shadow-sm flex flex-col justify-between min-h-[180px]">
+                            <div>
+                                <span class="font-mono text-[10px] text-slate-400 uppercase">ID: ${cat.id.substring(0,6)}</span>
+                                <h4 class="text-2xl font-medium text-slate-800 mt-2">${cat.name}</h4>
+                            </div>
+                            <div class="mt-8 flex justify-between items-center border-t border-slate-50 pt-4">
+                                <span class="text-2xl font-bold text-[#ac8aff]">${cat.postCount} <small class="text-[10px] text-slate-300">POSTS</small></span>
+                                <div class="flex gap-2">
+                                    <button onclick="editCategory('${cat.id}', '${cat.name}')" class="p-2 text-slate-300 hover:text-[#ac8aff]"><span class="material-symbols-outlined text-sm">edit</span></button>
+                                    <button onclick="deleteCategory('${cat.id}')" class="p-2 text-slate-300 hover:text-red-400"><span class="material-symbols-outlined text-sm">delete</span></button>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                });
+            },
+            error: (err) => handleError(err, "tải danh sách Categories")
+        });
+    }
+
+    function createCategory(e) {
+        e.preventDefault();
+        const name = $('#new-cat-name').val().trim();
+        $.ajax({
+            url: `${API_BASE}/categories`, type: 'POST', headers: authHeaders,
+            data: JSON.stringify({ name }),
+            success: () => { toggleCatModal(false); $('#new-cat-name').val(''); fetchCategories(); showToast(); },
+            error: (err) => handleError(err, "tạo Category mới")
+        });
+    }
+
+    function editCategory(id, currentName) {
+        const newName = prompt("Enter new category name:", currentName);
+        if (newName && newName.trim() !== "" && newName !== currentName) {
+            if (confirm("Are you sure you want to save this change?")) {
+                $.ajax({
+                    url: `${API_BASE}/categories/${id}`, type: 'PUT', headers: authHeaders,
+                    data: JSON.stringify({ name: newName.trim() }),
+                    success: () => { fetchCategories(); showToast(); },
+                    error: (err) => handleError(err, "cập nhật Category")
+                });
+            }
+        }
+    }
+
+    function deleteCategory(id) {
+        if (confirm("Are you sure you want to delete this category? This action cannot be undone.")) {
+            $.ajax({
+                url: `${API_BASE}/categories/${id}`, type: 'DELETE', headers: authHeaders,
+                success: () => { fetchCategories(); showToast(); },
+                error: (err) => handleError(err, "xóa Category (Có thể do đang có bài viết dùng Category này)")
+            });
+        }
+    }
+
+    /* --- TAGS LOGIC --- */
+    function fetchTags() {
+        $.ajax({
+            url: `${API_BASE}/tags`, type: 'GET',
+            success: function(res) {
+                allTags = res.result || [];
+                renderTags();
+                renderArchiveHealth();
+            },
+            error: (err) => handleError(err, "tải danh sách Tags")
+        });
+    }
+
+    function renderTags() {
+        const $list = $('#tag-list').empty();
+        allTags.forEach(tag => {
+            let xBtn = isTagEditMode ? `<button onclick="deleteTag('${tag.id}', event)" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] hover:bg-red-700">×</button>` : '';
+            $list.append(`
+                <div onclick="clickTag('${tag.id}', '${tag.name}')" class="tag-pill flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-sm">
+                    <span class="text-[11px] uppercase tracking-wider font-bold text-slate-600">${tag.name}</span>
+                    <span class="text-[10px] font-mono text-slate-400">${tag.postCount}</span>
+                    ${xBtn}
+                </div>
+            `);
+        });
+    }
+
+    function toggleTagEditMode() {
+        isTagEditMode = !isTagEditMode;
+        if (isTagEditMode) {
+            $('#tag-container').addClass('edit-mode');
+            $('#btn-edit-tags').text('Save').css('color', '#ac8aff');
+        } else {
+            $('#tag-container').removeClass('edit-mode');
+            $('#btn-edit-tags').text('Edit Tags').css('color', 'inherit');
+            showToast();
+        }
+        renderTags();
+    }
+
+    function clickTag(id, name) {
+        if (!isTagEditMode) return;
+        const newName = prompt("Edit tag name:", name);
+        if (newName && newName.trim() !== "" && newName !== name) {
+            $.ajax({
+                url: `${API_BASE}/tags/${id}`, type: 'PUT', headers: authHeaders,
+                data: JSON.stringify({ name: newName.trim() }),
+                success: () => { fetchTags(); },
+                error: (err) => handleError(err, "cập nhật Tag")
+            });
+        }
+    }
+
+    function deleteTag(id, e) {
+        e.stopPropagation();
+        if (confirm("Delete this tag?")) {
+            $.ajax({
+                url: `${API_BASE}/tags/${id}`, type: 'DELETE', headers: authHeaders,
+                success: () => { fetchTags(); },
+                error: (err) => handleError(err, "xóa Tag")
+            });
+        }
+    }
+
+    function createTag(e) {
+        e.preventDefault();
+        const name = $('#new-tag-name').val().trim();
+        $.ajax({
+            url: `${API_BASE}/tags`, type: 'POST', headers: authHeaders,
+            data: JSON.stringify({ name }),
+            success: () => { $('#new-tag-name').val(''); fetchTags(); showToast(); },
+            error: (err) => handleError(err, "tạo Tag mới")
+        });
+    }
+
+    function renderArchiveHealth() {
+        if(allTags.length === 0) return;
+        const activeTags = allTags.filter(t => t.postCount > 0);
+        const percentage = Math.round((activeTags.length / allTags.length) * 100);
+        $('#health-desc').html(`<span class="font-bold text-white text-sm">${percentage}%</span> of your tags are active.`);
+
+        let sorted = [...allTags].sort((a,b) => a.postCount - b.postCount).slice(0, 5);
+        const $uList = $('#unused-tags-list').empty();
+        sorted.forEach(t => {
+            $uList.append(`<span class="px-2 py-1 text-[9px] border border-white/10 rounded-sm uppercase opacity-60">${t.name} (${t.postCount})</span>`);
+        });
+    }
+
+    /* --- RANDOM POST LOGIC --- */
+    function fetchRandomPost() {
+        $.ajax({
+            url: `${API_BASE}/blogs`,
+            type: 'GET',
+            cache: false, // 🔥 Bắt buộc trình duyệt không được lưu Cache cũ
+            success: function(res) {
+                // 🔥 Hỗ trợ lấy đúng mảng bài viết (đề phòng API của bạn dùng Phân trang - Pagination)
+                let blogs = res.result?.data || res.result?.content || res.result || [];
+
+                // In ra Console để bạn kiểm tra xem API thực sự trả về bao nhiêu bài
+                console.log("Tổng số bài viết lấy được từ API: ", blogs.length);
+
+                // Loại bỏ các bài viết đang lưu nháp (nếu có)
+                blogs = blogs.filter(b => b.draft === false || typeof b.draft === 'undefined');
+
+                console.log("Số bài viết hợp lệ để Random: ", blogs.length);
+
+                if(blogs.length === 0) {
+                    $('#rp-title').text("No posts found.");
+                    return;
+                }
+
+                // Random index thực sự
+                const randomIndex = Math.floor(Math.random() * blogs.length);
+                const b = blogs[randomIndex];
+
+                $('#rp-title').text(b.title);
+
+                const authorName = b.author?.username || b.authorName || 'unknown';
+                $('#rp-author').text(`@${authorName}`);
+
+                if(b.banner || b.thumbnailUrl) {
+                    $('#rp-placeholder').addClass('hidden');
+                    $('#rp-image').attr('src', b.banner || b.thumbnailUrl).removeClass('hidden');
+                }
+                $('#rp-link').attr('href', `/pages/post.html?id=${b.id}`).removeClass('hidden');
+            },
+            error: (err) => console.error("Error while fetch Random Post:", err)
+        });
+    }
+
+    function toggleCatModal(show) {
+        const m = $('#catModal'); const c = $('#modalContent');
+        if (show) { m.addClass('active'); setTimeout(() => c.addClass('scale-100 opacity-100').removeClass('scale-95 opacity-0'), 10); }
+        else { c.addClass('scale-95 opacity-0').removeClass('scale-100 opacity-100'); setTimeout(() => m.removeClass('active'), 200); }
+    }
+</script>
+</body>
+</html>

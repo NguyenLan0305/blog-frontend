@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>BlogAdmin | User Management</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400;700&display=swap" rel="stylesheet"/>
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "admin-bg": "#F5F5F3",
+                        "admin-side": "#2D3432",
+                        "admin-primary": "#ac8aff"
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F5F5F3; margin: 0; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400; vertical-align: middle; }
+        ::-webkit-scrollbar { display: none; }
+        html { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Sidebar & Navbar Layout */
+        aside { position: fixed; left: 0; top: 0; height: 100vh; width: 220px; background-color: #2D3432; z-index: 1100; }
+        header { position: fixed; top: 0; right: 0; left: 220px; height: 64px; background: white; border-bottom: 1px solid rgba(0,0,0,0.05); z-index: 1000; display: flex; align-items: center; padding: 0 32px; justify-content: space-between; }
+        main { margin-left: 220px; padding-top: 84px !important; min-height: 100vh; }
+
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 14px 20px; color: #ADB3B0; text-decoration: none; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; transition: all 0.2s; }
+        .nav-item:hover, .nav-item.active { color: white; background: rgba(172, 138, 255, 0.08); border-right: 4px solid #ac8aff; }
+
+        /* Modal Styles */
+        #userModal {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(4px); z-index: 2000; align-items: center; justify-content: center;
+        }
+        #userModal.active { display: flex; }
+
+        /* Toast Styling */
+        #toast {
+            visibility: hidden; min-width: 250px; background-color: #2D3432; color: #fff;
+            text-align: center; border-radius: 8px; padding: 16px; position: fixed;
+            z-index: 3000; right: 30px; bottom: 30px; font-size: 14px; font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+    </style>
+</head>
+<body>
+
+<div id="toast">Action completed successfully!</div>
+
+<div id="sidebar-placeholder"></div>
+
+<header>
+    <h2 class="text-lg font-bold text-[#2D3432] uppercase tracking-tight">User Management</h2>
+    <div class="flex items-center gap-6">
+        <button class="relative text-slate-400 hover:text-[#ac8aff]"><span class="material-symbols-outlined">notifications</span></button>
+    </div>
+</header>
+
+<main class="p-8">
+    <div class="flex justify-between items-center mb-8 bg-white/50 p-4 rounded-lg border border-slate-100 shadow-sm">
+        <div class="relative w-full max-w-md">
+            <span class="absolute inset-y-0 left-3 flex items-center text-slate-400"><span class="material-symbols-outlined text-[20px]">search</span></span>
+            <input id="search-input" class="w-full bg-white border border-slate-200 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#ac8aff]/20 transition-all" placeholder="Search users by username or email..." type="text"/>
+        </div>
+        <button onclick="openCreateModal()" class="bg-[#2D3432] text-white px-6 py-3 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-black transition-colors shadow-lg">
+            <span class="material-symbols-outlined text-[20px]">person_add</span>
+            CREATE NEW USER
+        </button>
+    </div>
+
+    <div class="bg-white shadow-sm border border-slate-100 overflow-hidden rounded-sm">
+        <table class="w-full text-left text-sm">
+            <thead>
+            <tr class="text-[10px] text-slate-400 uppercase border-b border-slate-50 font-bold bg-slate-50/50">
+                <th class="p-6">User Identity</th>
+                <th class="p-6">Email Address</th>
+                <th class="p-6">Role</th>
+                <th class="p-6 text-right">Actions</th>
+            </tr>
+            </thead>
+            <tbody id="users-tbody" class="divide-y divide-slate-50 text-slate-600">
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<div id="userModal" onclick="if(event.target == this) toggleModal(false)">
+    <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden transform transition-all scale-95 opacity-0 duration-200" id="modalContent">
+        <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+            <h3 id="modal-title" class="font-bold text-lg text-[#2D3432] uppercase tracking-tight">Add New User</h3>
+            <button type="button" onclick="toggleModal(false)" class="text-slate-400 hover:text-slate-600 transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form class="p-6 space-y-4" onsubmit="saveUser(event)">
+            <input type="hidden" id="modal-user-id">
+
+            <div class="space-y-1.5">
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Username <span class="text-red-500">*</span></label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-3 flex items-center text-slate-300"><span class="material-symbols-outlined text-[18px]">person</span></span>
+                    <input type="text" id="modal-username" required class="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-[#ac8aff]/20 focus:border-[#ac8aff] outline-none transition-all" placeholder="Enter username">
+                </div>
+            </div>
+
+            <div class="space-y-1.5" id="password-group">
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Password <span class="text-red-500">*</span></label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-3 flex items-center text-slate-300"><span class="material-symbols-outlined text-[18px]">lock</span></span>
+                    <input type="password" id="modal-password" class="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-[#ac8aff]/20 focus:border-[#ac8aff] outline-none transition-all" placeholder="Enter password">
+                </div>
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Email Address</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-3 flex items-center text-slate-300"><span class="material-symbols-outlined text-[18px]">mail</span></span>
+                    <input type="email" id="modal-email" class="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-[#ac8aff]/20 focus:border-[#ac8aff] outline-none transition-all" placeholder="Optional email">
+                </div>
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Assign Role</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-3 flex items-center text-slate-300"><span class="material-symbols-outlined text-[18px]">shield_person</span></span>
+                    <select id="modal-role" class="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-[#ac8aff]/20 focus:border-[#ac8aff] outline-none bg-white appearance-none cursor-pointer">
+                        <option value="USER">User</option>
+                        <option value="ADMIN">Admin</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="pt-2 flex gap-3">
+                <button type="button" onclick="toggleModal(false)" class="flex-1 py-2.5 bg-slate-100 text-sm font-bold text-slate-500 rounded-xl hover:bg-slate-200 transition-colors uppercase tracking-widest">Cancel</button>
+                <button type="submit" class="flex-1 py-2.5 bg-[#2D3432] text-white rounded-xl text-sm font-bold hover:bg-black shadow-lg transition-all uppercase tracking-widest">Save User</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+    const API_BASE = "https://blog-inkwell.onrender.com";
+    let allUsers = [];
+
+    $(document).ready(function() {
+        $("#sidebar-placeholder").load("/fragments/admin_sidebar.html", function() {
+            $("#nav-users").addClass("active");
+        });
+
+        loadUsers();
+
+        // Real-time Search
+        $('#search-input').on('input', function() {
+            const keyword = $(this).val().toLowerCase();
+            const filtered = allUsers.filter(u =>
+                (u.username && u.username.toLowerCase().includes(keyword)) ||
+                (u.email && u.email.toLowerCase().includes(keyword))
+            );
+            renderUsers(filtered);
+        });
+    });
+
+    function showToast(message) {
+        const x = document.getElementById("toast");
+        x.innerText = message;
+        x.style.visibility = "visible";
+        x.style.animation = "fadein 0.5s, fadeout 0.5s 2.5s";
+        setTimeout(() => { x.style.visibility = "hidden"; x.style.animation = ""; }, 3000);
+    }
+
+    function loadUsers() {
+        const token = localStorage.getItem('token');
+        $.ajax({
+            url: `${API_BASE}/users`,
+            type: 'GET',
+            headers: { 'Authorization': 'Bearer ' + token },
+            success: function(res) {
+                allUsers = res.result || [];
+                renderUsers(allUsers);
+            },
+            error: function(err) {
+                console.error("Failed to load users", err);
+            }
+        });
+    }
+
+    function renderUsers(usersArray) {
+        const $tbody = $('#users-tbody').empty();
+
+        if (!usersArray || usersArray.length === 0) {
+            $tbody.append('<tr><td colspan="4" class="p-6 text-center text-slate-400">No users found.</td></tr>');
+            return;
+        }
+
+        usersArray.forEach(user => {
+            const isAdmin = user.roles && user.roles.includes('ADMIN');
+
+            const roleBadge = isAdmin
+                ? '<span class="px-2 py-0.5 bg-purple-50 text-[#ac8aff] text-[10px] font-bold rounded uppercase">Admin</span>'
+                : '<span class="px-2 py-0.5 bg-slate-100 text-slate-500 text-[10px] font-bold rounded uppercase">User</span>';
+
+            const emailDisplay = user.email
+                ? user.email
+                : '<span class="italic text-slate-300">Not provided</span>';
+
+            // Xử lý hiển thị Avatar thực tế hoặc chữ cái đầu
+            let avatarHtml = '';
+            if (user.avatarUrl) {
+                avatarHtml = `<img src="${user.avatarUrl}" alt="avatar" class="w-9 h-9 rounded-full object-cover border border-slate-200">`;
+            } else {
+                const initial = user.username ? user.username.charAt(0).toUpperCase() : '?';
+                avatarHtml = `<div class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-400 text-xs">${initial}</div>`;
+            }
+
+            $tbody.append(`
+                <tr class="hover:bg-slate-50 transition-colors border-b border-slate-50">
+                    <td class="p-6 flex items-center gap-3">
+                        ${avatarHtml}
+                        <span class="font-medium text-slate-800">${user.username}</span>
+                    </td>
+                    <td class="p-6 font-mono text-xs text-slate-500">${emailDisplay}</td>
+                    <td class="p-6">${roleBadge}</td>
+                    <td class="p-6 text-right text-slate-300">
+                        <button onclick="openEditModal('${user.id}')" class="hover:text-[#ac8aff] transition-colors" title="Edit User">
+                            <span class="material-symbols-outlined text-lg">edit</span>
+                        </button>
+                    </td>
+                </tr>
+            `);
+        });
+    }
+
+    /* Modal Logic */
+    function toggleModal(show) {
+        const modal = document.getElementById('userModal');
+        const content = document.getElementById('modalContent');
+        if (show) {
+            modal.classList.add('active');
+            setTimeout(() => { content.classList.remove('scale-95', 'opacity-0'); content.classList.add('scale-100', 'opacity-100'); }, 10);
+        } else {
+            content.classList.remove('scale-100', 'opacity-100'); content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => { modal.classList.remove('active'); }, 200);
+        }
+    }
+
+    function openCreateModal() {
+        $('#modal-title').text('Create New User');
+        $('#modal-user-id').val('');
+        $('#modal-username').val('').prop('readonly', false);
+        $('#modal-password').val('').prop('required', true);
+        $('#password-group').show();
+        $('#modal-email').val('');
+        $('#modal-role').val('USER');
+        toggleModal(true);
+    }
+
+    function openEditModal(userId) {
+        const user = allUsers.find(u => u.id === userId);
+        if (!user) return;
+
+        $('#modal-title').text('Edit User Role & Info');
+        $('#modal-user-id').val(user.id);
+        $('#modal-username').val(user.username).prop('readonly', true); // Không cho sửa username
+        $('#modal-password').val('').prop('required', false);
+        $('#password-group').hide(); // Ẩn trường password khi edit
+        $('#modal-email').val(user.email || '');
+
+        const currentRole = (user.roles && user.roles.includes('ADMIN')) ? 'ADMIN' : 'USER';
+        $('#modal-role').val(currentRole);
+
+        toggleModal(true);
+    }
+
+    function saveUser(e) {
+        e.preventDefault();
+
+        const id = $('#modal-user-id').val();
+        const username = $('#modal-username').val().trim();
+        const email = $('#modal-email').val().trim();
+        const password = $('#modal-password').val();
+        const role = $('#modal-role').val();
+
+        // Validate Format Email (Chỉ chạy nếu người dùng có nhập)
+        if (email !== "") {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert("Invalid email format! Please enter a valid email address.");
+                return;
+            }
+        }
+
+        if (!confirm("Are you sure you want to save this user's information?")) return;
+
+        let url = `${API_BASE}/users`;
+        let method = 'POST';
+
+        // Payload chuẩn gửi kèm Array roles
+        let payload = {
+            username: username,
+            email: email,
+            roles: [role]
+        };
+
+        if (id) {
+            url = `${API_BASE}/users/${id}`;
+            method = 'PUT';
+        } else {
+            payload.password = password;
+        }
+
+        $.ajax({
+            url: url,
+            type: method,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify(payload),
+            success: function() {
+                showToast("User saved successfully!");
+                toggleModal(false);
+                loadUsers(); // Reload Data
+            },
+            error: function(err) {
+                alert("Action failed: " + (err.responseJSON?.message || "Server Error. Check terminal."));
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

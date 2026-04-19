@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Manage Blogs | Inkwell</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/main.css"/>
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ac8aff", "background": "#0b0e14",
+                        "surface-container-low": "#10131b", "outline-variant": "#424855",
+                        "on-surface": "#e0e5f5", "on-surface-variant": "#a5abba"
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        body { background-color: #0b0e14 !important; color: #e0e5f5; font-family: 'Inter', sans-serif; margin: 0; }
+        ::-webkit-scrollbar { display: none; }
+        html { -ms-overflow-style: none; scrollbar-width: none; }
+
+        #navbar-container { position: fixed; top: 0; width: 100%; z-index: 1050; background: #0b0e14; border-bottom: 1px solid rgba(66,72,85,0.15); }
+        .no-underline { text-decoration: none !important; }
+        .tab-btn.active { color: #ac8aff; border-bottom: 2px solid #ac8aff; font-weight: bold; }
+    </style>
+</head>
+<body class="overflow-x-hidden bg-background no-global-search">
+
+<div id="navbar-container"></div>
+
+<div id="dashboard-sidebar-container"></div>
+
+<div class="md:ml-64 flex flex-col min-h-screen" style="padding-top: 100px;">
+    <main class="flex-1 p-6 md:p-10 max-w-6xl mx-auto w-full">
+        <section class="mb-10">
+            <h2 class="font-['Newsreader'] text-4xl md:text-5xl font-bold text-on-surface mb-2 italic">Manage Blogs</h2>
+            <p class="text-on-surface-variant text-lg">View and manage your published articles and drafts.</p>
+        </section>
+
+        <section class="mb-8 flex gap-4">
+            <div class="flex-1 relative">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+                <input id="dashboard-search" class="w-full bg-[#151a22] border border-outline-variant/30 rounded-xl pl-12 pr-4 py-4 text-on-surface outline-none focus:ring-2 focus:ring-primary/40" placeholder="Search blogs..." type="text"/>
+            </div>
+        </section>
+
+        <section class="mb-8 border-b border-outline-variant/10 flex gap-8">
+            <button onclick="switchTab('published')" id="tab-published" class="tab-btn pb-4 active transition-all">Published Blogs</button>
+            <button onclick="switchTab('drafts')" id="tab-drafts" class="tab-btn pb-4 text-on-surface-variant font-medium hover:text-on-surface transition-all">Drafts</button>
+        </section>
+
+        <div id="content-published" class="space-y-6"></div>
+        <div id="content-drafts" class="space-y-6 hidden"></div>
+    </main>
+</div>
+
+<div id="toasts"></div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="/assets/js/app.js"></script>
+<script src="/assets/js/auth.js"></script>
+<script src="/assets/js/nav.js"></script>
+
+<script>
+    function switchTab(tab) {
+        $('.tab-btn').removeClass('active text-primary font-bold').addClass('text-on-surface-variant font-medium');
+        $('#content-published, #content-drafts').addClass('hidden');
+
+        if(tab === 'published') {
+            $('#tab-published').addClass('active text-primary font-bold').removeClass('text-on-surface-variant font-medium');
+            $('#content-published').removeClass('hidden');
+        } else {
+            $('#tab-drafts').addClass('active text-primary font-bold').removeClass('text-on-surface-variant font-medium');
+            $('#content-drafts').removeClass('hidden');
+        }
+        $('#dashboard-search').val('');
+        $('#content-published article, #content-drafts article').show();
+    }
+
+    $(document).ready(function() {
+        $('#navbar-container').load('/fragments/navbar.html', function() {
+            if (typeof updateNavAuth === 'function') updateNavAuth();
+        });
+
+        // LOAD SIDEBAR
+        $('#dashboard-sidebar-container').load('/fragments/dashboard-sidebar.html');
+
+        if (S.isAuth) { loadMyBlogs(); }
+        else { window.location.href = '/pages/login.html'; }
+    });
+
+    $('#dashboard-search').on('input', function() {
+        const keyword = $(this).val().toLowerCase().trim();
+        const targetContainerId = $('#tab-published').hasClass('active') ? '#content-published' : '#content-drafts';
+        $(targetContainerId).find('article').each(function() {
+            const title = $(this).find('h3').text().toLowerCase();
+            if (title.includes(keyword)) $(this).show();
+            else $(this).hide();
+        });
+    });
+
+    function loadMyBlogs() {
+        const $pubList = $('#content-published');
+        const $draftList = $('#content-drafts');
+
+        $pubList.html('<p class="text-center text-on-surface-variant mt-5">Đang tải dữ liệu...</p>');
+        $draftList.html('<p class="text-center text-on-surface-variant mt-5">Đang tải dữ liệu...</p>');
+
+        callApi('/blogs/my-blogs', 'GET').done(function(res) {
+            const blogs = res.result || [];
+            $pubList.empty(); $draftList.empty();
+
+            let pubCount = 0, draftCount = 0;
+
+            blogs.forEach(p => {
+                const bannerUrl = p.banner ? p.banner : 'https://placehold.co/600x400/151a22/a5abba?text=No+Image';
+                const dateStr = fmtDate(p.createdAt);
+
+                if (p.draft === false) {
+                    pubCount++;
+                    $pubList.append(`
+                        <article class="bg-[#151a22] rounded-xl overflow-hidden hover:bg-[#1b202a] transition-all flex items-center p-3 gap-4 border border-outline-variant/5">
+                            <div class="w-20 h-20 md:w-28 md:h-28 flex-shrink-0 rounded-lg overflow-hidden cursor-pointer" onclick="window.location.href='/pages/post.html?id=${p.slug}'">
+                                <img class="w-full h-full object-cover" src="${bannerUrl}" alt="Banner"/>
+                            </div>
+                            <div class="flex-1 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                <div>
+                                    <h3 class="font-['Newsreader'] text-lg md:text-xl font-bold text-on-surface"><a href="post.html?id=${p.slug}" class="text-white no-underline hover:text-primary">${p.title}</a></h3>
+                                    <p class="text-on-surface-variant text-[11px]">Published on ${dateStr}</p>
+                                    <div class="flex gap-2 mt-3">
+                                        <a href="blog-editor.html?id=${p.slug}" class="px-3 py-1 rounded-full border border-outline-variant/30 text-[10px] hover:bg-primary hover:text-[#000] no-underline">Edit</a>
+                                        <button onclick="deleteBlog('${p.id}')" class="px-3 py-1 rounded-full border border-red-500/30 text-red-400 text-[10px] hover:bg-red-500 hover:text-white">Delete</button>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-6">
+                                    <div class="text-center"><span class="block text-base font-bold text-primary">${p.totalLikes || 0}</span><span class="text-[8px] uppercase text-on-surface-variant">Likes</span></div>
+                                    <div class="text-center"><span class="block text-base font-bold text-[#89ceff]">${p.totalComments || 0}</span><span class="text-[8px] uppercase text-on-surface-variant">Comments</span></div>
+                                </div>
+                            </div>
+                        </article>
+                    `);
+                } else {
+                    draftCount++;
+                    $draftList.append(`
+                        <article class="bg-[#151a22] rounded-xl overflow-hidden hover:bg-[#1b202a] transition-all flex items-center p-3 gap-4 border border-outline-variant/5">
+                            <div class="w-20 h-20 md:w-28 md:h-28 flex-shrink-0 rounded-lg overflow-hidden cursor-pointer" onclick="window.location.href='/pages/blog-editor.html?id=${p.slug}'">
+                                <img class="w-full h-full object-cover grayscale opacity-50" src="${bannerUrl}" alt="Banner"/>
+                            </div>
+                            <div class="flex-1 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                <div>
+                                    <h3 class="font-['Newsreader'] text-lg md:text-xl font-bold text-on-surface-variant">[Draft] ${p.title}</h3>
+                                    <p class="text-on-surface-variant text-[11px]">Created on ${dateStr}</p>
+                                    <div class="flex gap-2 mt-3">
+                                        <a href="blog-editor.html?id=${p.slug}" class="px-3 py-1 rounded-full border border-outline-variant/30 text-[10px] hover:bg-primary hover:text-[#000] no-underline">Continue Writing</a>
+                                        <button onclick="deleteBlog('${p.id}')" class="px-3 py-1 rounded-full border border-red-500/30 text-red-400 text-[10px] hover:bg-red-500 hover:text-white">Delete</button>
+                                    </div>
+                                </div>
+                                <div class="px-4 py-1 bg-outline-variant/10 rounded text-[10px] uppercase text-on-surface-variant">Not Published</div>
+                            </div>
+                        </article>
+                    `);
+                }
+            });
+
+            if (pubCount === 0) $pubList.html('<div class="text-center py-10"><span class="material-symbols-outlined text-4xl text-outline-variant mb-2">article</span><p class="text-on-surface-variant">Bạn chưa xuất bản bài viết nào.</p><a href="blog-editor.html" class="text-primary no-underline hover:underline">Viết bài mới ngay</a></div>');
+            if (draftCount === 0) $draftList.html('<div class="text-center py-10"><p class="text-on-surface-variant">Không có bản nháp nào.</p></div>');
+        }).fail(function() {
+            $pubList.html('<p class="text-center text-red-400 mt-5">Lỗi kết nối máy chủ.</p>');
+            $draftList.html('<p class="text-center text-red-400 mt-5">Lỗi kết nối máy chủ.</p>');
+        });
+    }
+
+    function deleteBlog(id) {
+        if(confirm("Bạn có chắc chắn muốn xóa bài viết này không?")) {
+            callApi('/blogs/' + id, 'DELETE').done(function() {
+                toast("Đã xóa bài viết thành công!");
+                loadMyBlogs();
+            }).fail(function(xhr) {
+                alert("Lỗi: Không thể xóa bài viết!");
+            });
+        }
+    }
+</script>
+</body>
+</html>
