@@ -31,11 +31,11 @@
   <main class="flex-1 p-6 md:p-10 max-w-5xl mx-auto w-full">
     <section class="mb-10 border-b border-[#424855]/20 pb-4">
       <h2 class="font-['Newsreader'] text-4xl md:text-5xl font-bold text-[#e0e5f5] mb-2 italic">Saved Reading</h2>
-      <p class="text-[#a5abba] text-lg">Danh sách các bài viết bạn đã lưu để đọc lại sau.</p>
+      <p class="text-[#a5abba] text-lg">Posts you’ve saved for later.</p>
     </section>
 
     <div id="saved-list" class="space-y-6">
-      <div class="text-center py-10 text-[#a5abba]">Đang tải danh sách...</div>
+      <div class="text-center py-10 text-[#a5abba]">Loading...</div>
     </div>
   </main>
 </div>
@@ -115,8 +115,8 @@
         $list.html(`
                     <div class="text-center py-16 bg-[#151a22]/50 rounded-2xl border border-dashed border-[#424855]/30">
                         <span class="material-symbols-outlined text-5xl text-[#424855] mb-3">bookmark_border</span>
-                        <p class="text-[#a5abba]">Bạn chưa lưu bài viết nào.</p>
-                        <a href="/pages/home-page.html" class="text-[#ac8aff] hover:underline mt-2 inline-block font-medium">Khám phá bài viết ngay</a>
+                        <p class="text-[#a5abba]">No saved posts yet</p>
+                        <a href="/pages/home-page.html" class="text-[#ac8aff] hover:underline mt-2 inline-block font-medium">Discover posts</a>
                     </div>
                 `);
         return;
