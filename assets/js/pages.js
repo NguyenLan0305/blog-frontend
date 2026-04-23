@@ -37,7 +37,7 @@ function buildCatPage() {
                     }).html(
                         '<div style="font-size:1.35rem;margin-bottom:.5rem;">📂</div>' +
                         '<div style="font-family:Playfair Display,serif;font-size:1.1rem;font-weight:700;color:' + col.fg + ';margin-bottom:.3rem;">' + c.name + '</div>' +
-                        '<div style="font-size:.8rem;color:var(--t3);">' + (c.postCount || 0) + ' articles</div>'
+                        '<div style="font-size:.8rem;color:var(--t2);">' + (c.postCount || 0) + ' articles</div>'
                     ).on('click', function(){
                         S.cat = c.id; // Giữ lại UUID để khi bấm vào nó filter bài viết chính xác
 

@@ -40,9 +40,9 @@
         #catModal { display: none; position: fixed; inset: 0; background: var(--overlay); backdrop-filter: blur(4px); z-index: 2000; align-items: center; justify-content: center; }
         #catModal.active { display: flex; }
 
-        .tag-pill { transition: all 0.2s; border: 1px solid rgba(24,32,47,0.08); position: relative; cursor: default; }
+        .tag-pill { transition: all 0.2s; border: 1px solid var(--bd); color: var(--t2); position: relative; cursor: default; }
         .edit-mode .tag-pill { cursor: pointer; border-color: var(--primary); }
-        .edit-mode .tag-pill:hover { background: var(--secondary); }
+        .edit-mode .tag-pill:hover { background: var(--secondary); color: var(--t1); border-color: var(--bd-p); }
 
         /* Toast Style */
         #toast { visibility: hidden; min-width: 250px; background-color: var(--primary); color: var(--card); text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 3000; right: 30px; bottom: 30px; font-size: 14px; font-weight: 600; box-shadow: 0 4px 12px rgba(24,32,47,0.12); }
@@ -267,9 +267,9 @@
         allTags.forEach(tag => {
             let xBtn = isTagEditMode ? `<button onclick="deleteTag('${tag.id}', event)" class="absolute -top-2 -right-2 bg-red-500 text-[var(--card)] rounded-full w-4 h-4 flex items-center justify-center text-[10px] hover:bg-red-700">×</button>` : '';
             $list.append(`
-                <div onclick="clickTag('${tag.id}', '${tag.name}')" class="tag-pill flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-sm">
-                    <span class="text-[11px] uppercase tracking-wider font-bold text-slate-600">${tag.name}</span>
-                    <span class="text-[10px] font-mono text-slate-400">${tag.postCount}</span>
+                <div onclick="clickTag('${tag.id}', '${tag.name}')" class="tag-pill flex items-center gap-2 px-3 py-2 bg-[var(--card)] rounded-sm">
+                    <span class="text-[11px] uppercase tracking-wider font-bold text-[var(--text)]">${tag.name}</span>
+                    <span class="text-[10px] font-mono text-[var(--muted)]">${tag.postCount}</span>
                     ${xBtn}
                 </div>
             `);
