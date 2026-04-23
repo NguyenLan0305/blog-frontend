@@ -52,7 +52,7 @@
         .btn-edit { border: 1px solid var(--outline-variant); color: var(--on-surface); background: transparent; }
         .btn-edit:hover { background: var(--surface-variant); }
 
-        .btn-follow { border: none; color: var(--text); background: var(--on-surface); }
+        .btn-follow { border: none; color: white; background: var(--primary); }
         .btn-follow:hover { opacity: 0.9; }
 
         .btn-unfollow { border: 1px solid var(--outline-variant); color: var(--on-surface); background: transparent; }
@@ -82,7 +82,7 @@
         .btn-sm-follow.is-following:hover span { display: none; }
         .btn-sm-follow.is-following:hover::after { content: 'Unfollow'; }
 
-        .btn-sm-follow.not-following { border: none; background: var(--on-surface); color: var(--text); }
+        .btn-sm-follow.not-following { border: none; background: var(--primary); color: white; }
         .btn-sm-follow.not-following:hover { opacity: 0.8; }
     </style>
 </head>
@@ -348,7 +348,7 @@
                     <h3>No blogs published yet</h3>
                     <p class="mx-auto mt-2">This space is waiting for stories to be told.</p>
                     ${(currentUser && currentUser === username)
-                    ? '<a href="/pages/blog-editor.html" class="btn-action btn-follow text-decoration-none mt-4 mx-auto" style="width: auto; padding: 0.6rem 1.5rem; color: var(--text);">Write a story</a>'
+                    ? '<a href="/pages/blog-editor.html" class="btn-action btn-follow text-decoration-none mt-4 mx-auto" style="width: auto; padding: 0.6rem 1.5rem; color: white;">Write a story</a>'
                     : ''}
                 </div>
             `);

@@ -196,7 +196,7 @@
 
         <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
             <button class="bg-[var(--secondary)] text-[var(--text)] px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-medium hover:bg-[var(--bg-card-h)] transition-all whitespace-nowrap" onclick="saveAsDraftAndLeave()">Save Draft</button>
-            <button id="btn-publish" class="bg-[var(--card)] text-[var(--bg)] px-4 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-bold hover:opacity-90 transition-all whitespace-nowrap" onclick="showPreview()">Publish</button>
+            <button id="btn-publish" class="bg-[var(--primary)] text-white px-4 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-bold hover:opacity-90 transition-all whitespace-nowrap" onclick="showPreview()">Publish</button>
         </div>
     </header>
 
@@ -1244,7 +1244,7 @@
                 showModal(
                     "Lưu bản nháp?",
                     "Bạn có những thay đổi chưa lưu.\nBạn có muốn lưu bài viết này thành Bản Nháp trước khi rời đi không?",
-                    { text: "Lưu & Rời đi", class: "px-4 py-2 bg-[var(--primary)] text-[var(--bg)] rounded-lg hover:opacity-90 font-medium text-sm transition-opacity" },
+                    { text: "Lưu & Rời đi", class: "px-4 py-2 bg-[var(--primary)] text-white rounded-lg hover:opacity-90 font-medium text-sm transition-opacity" },
                     { text: "Bỏ qua & Rời đi", class: "px-4 py-2 bg-transparent text-[var(--muted)] hover:text-[var(--text)] font-medium text-sm transition-colors" },
                     () => { saveAsDraftAndLeave(); },
                     () => { window.location.href = '/pages/manage-blogs.html'; }
