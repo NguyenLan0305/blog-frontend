@@ -77,7 +77,7 @@ function buildCard(p) {
             
             <div class="d-flex align-items-center gap-2 mb-3" style="font-size: 0.85rem; color: var(--muted);">
                 <img src="${authorAvatar}" alt="Avatar" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;">
-                <span class="text-[var(--card)] fw-bold">${authorName}</span>
+                <span class="text-[var(--primary)] fw-bold">${authorName}</span>
                 <span>•</span>
                 <span>${dateStr}</span>
             </div>

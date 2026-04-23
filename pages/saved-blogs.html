@@ -136,9 +136,9 @@
                         <div class="flex-1 flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div>
                                 <h3 class="font-['Newsreader'] text-xl font-bold text-[var(--text)] mb-1">
-                                    <a href="/pages/post.html?id=${p.slug}" class="text-[var(--card)] hover:text-[var(--primary)] transition-colors">${p.title}</a>
+                                    <a href="/pages/post.html?id=${p.slug}" class="text-[var(--text)] hover:text-[var(--primary)] transition-colors">${p.title}</a>
                                 </h3>
-                                <p class="text-[var(--muted)] text-xs mb-3">By <span class="text-[var(--card)] font-medium">${authorName}</span> • ${dateStr} • ${catName}</p>
+                                <p class="text-[var(--muted)] text-xs mb-3">By <span class="text-[var(--primary)] font-medium">${authorName}</span> • ${dateStr} • ${catName}</p>
                                 <button onclick="openConfirmModal('${p.id}')" class="px-4 py-1.5 rounded-full border border-red-500/30 text-red-400 text-xs font-medium hover:bg-red-500 hover:text-[var(--card)] transition-colors flex items-center gap-1 w-max">
                                     Bỏ lưu
                                 </button>
