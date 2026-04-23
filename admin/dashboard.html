@@ -8,36 +8,37 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="/assets/css/main.css"/>
 
     <script id="tailwind-config">
         tailwind.config = {
-            darkMode: "class",
+            
             theme: {
                 extend: {
                     colors: {
-                        "admin-bg": "#F5F5F3",
-                        "admin-side": "#2D3432",
-                        "admin-primary": "#ac8aff",
-                        "bd-p": "#7c6ff7"
+                        "admin-bg": "var(--bg)",
+                        "admin-side": "var(--secondary)",
+                        "admin-primary": "var(--primary)",
+                        "bd-p": "var(--primary)"
                     }
                 },
             },
         }
     </script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #F5F5F3; margin: 0; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); margin: 0; }
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400; vertical-align: middle; }
         ::-webkit-scrollbar { display: none; }
         html { -ms-overflow-style: none; scrollbar-width: none; }
 
         aside {
             position: fixed; left: 0; top: 0; height: 100vh; width: 220px;
-            background-color: #2D3432; z-index: 1000;
+            background-color: var(--secondary); z-index: 1000;
         }
 
         header {
             position: fixed; top: 0; right: 0; left: 220px; height: 64px;
-            background: white; border-bottom: 1px solid rgba(0,0,0,0.05);
+            background: var(--card); border-bottom: 1px solid rgba(24,32,47,0.08);
             z-index: 999; display: flex; align-items: center; padding: 0 32px;
             justify-content: space-between;
         }
@@ -46,13 +47,13 @@
 
         .nav-item {
             display: flex; align-items: center; gap: 12px; padding: 14px 20px;
-            color: #ADB3B0; text-decoration: none; font-size: 12px;
+            color: var(--muted); text-decoration: none; font-size: 12px;
             font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;
             transition: all 0.2s;
         }
         .nav-item:hover, .nav-item.active {
-            color: white; background: rgba(172, 138, 255, 0.08);
-            border-right: 4px solid #ac8aff;
+            color: var(--primary); background: rgba(109,93,246,0.10);
+            border-right: 4px solid var(--primary);
         }
     </style>
 </head>
@@ -62,13 +63,13 @@
 
 <header>
     <div>
-        <h2 class="text-lg font-bold text-[#2D3432] tracking-tight uppercase">Dashboard</h2>
+        <h2 class="text-lg font-bold text-[var(--text)] tracking-tight uppercase">Dashboard</h2>
     </div>
 
     <div class="flex items-center gap-6">
-        <button class="relative text-slate-400 hover:text-[#ac8aff] transition-colors">
+        <button class="relative text-slate-400 hover:text-[var(--primary)] transition-colors">
             <span class="material-symbols-outlined text-[22px]">chat_bubble_outline</span>
-            <span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-[#ac8aff]/60 rounded-full border-2 border-white"></span>
+            <span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-[var(--primary)]/60 rounded-full border-2 border-[var(--card)]"></span>
         </button>
     </div>
 </header>
@@ -79,21 +80,21 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        <div class="bg-white p-6 shadow-sm border border-slate-100 rounded-sm">
+        <div class="bg-[var(--card)] p-6 shadow-sm border border-slate-100 rounded-sm">
             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Users</p>
             <h4 id="total-users" class="text-3xl font-black mt-2 text-slate-800">...</h4>
         </div>
 
-        <div class="bg-white p-6 shadow-sm border border-slate-100 rounded-sm">
+        <div class="bg-[var(--card)] p-6 shadow-sm border border-slate-100 rounded-sm">
             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Posts</p>
             <h4 id="total-posts" class="text-3xl font-black mt-2 text-slate-800">...</h4>
         </div>
     </div>
 
-    <div class="bg-white shadow-sm border border-slate-100 rounded-sm overflow-hidden">
+    <div class="bg-[var(--card)] shadow-sm border border-slate-100 rounded-sm overflow-hidden">
         <div class="p-6 border-b border-slate-50 flex justify-between items-center">
             <h4 class="text-[10px] font-black uppercase tracking-widest text-slate-600">Recent Posts</h4>
-            <a href="/admin/posts.html" class="text-[10px] font-bold text-slate-400 hover:text-[#ac8aff] uppercase tracking-tighter transition-colors">View All</a>
+            <a href="/admin/posts.html" class="text-[10px] font-bold text-slate-400 hover:text-[var(--primary)] uppercase tracking-tighter transition-colors">View All</a>
         </div>
         <table class="w-full text-left text-sm">
             <thead>
@@ -110,7 +111,7 @@
     </div>
 </main>
 
-<div id="toast" style="visibility: hidden; min-width: 250px; background-color: #2D3432; color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 3000; right: 30px; bottom: 30px; font-size: 14px; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+<div id="toast" style="visibility: hidden; min-width: 250px; background-color: var(--primary); color: var(--card); text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 3000; right: 30px; bottom: 30px; font-size: 14px; font-weight: 600; box-shadow: 0 4px 12px rgba(24,32,47,0.12);">
     Post deleted successfully!
 </div>
 
@@ -156,11 +157,11 @@
                         const row = `
                             <tr class="hover:bg-slate-50 transition-colors">
                                 <td class="px-6 py-5 font-medium text-slate-800">${post.title}</td>
-                                <td class="px-6 py-5 font-mono text-[#ac8aff]">@${authorName}</td>
+                                <td class="px-6 py-5 font-mono text-[var(--primary)]">@${authorName}</td>
                                 <td class="px-6 py-5 text-right font-mono text-xs text-slate-400">${date}</td>
                                 <td class="px-6 py-5 text-right">
                                     <div class="flex justify-end gap-3">
-                                        <a href="/pages/post.html?id=${post.id}" target="_blank" class="text-slate-400 hover:text-[#ac8aff] transition-colors"><span class="material-symbols-outlined text-[18px]">visibility</span></a>
+                                        <a href="/pages/post.html?id=${post.id}" target="_blank" class="text-slate-400 hover:text-[var(--primary)] transition-colors"><span class="material-symbols-outlined text-[18px]">visibility</span></a>
                                         <button onclick="deletePost('${post.id}')" class="text-slate-400 hover:text-red-400 transition-colors"><span class="material-symbols-outlined text-[18px]">delete</span></button>
                                     </div>
                                 </td>

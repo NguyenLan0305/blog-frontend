@@ -10,57 +10,58 @@
           rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400;700&display=swap"
           rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="/assets/css/main.css"/>
 
     <script id="tailwind-config">
         tailwind.config = {
-            darkMode: "class",
+            
             theme: {
                 extend: {
                     colors: {
-                        "admin-bg": "#F5F5F3",
-                        "admin-side": "#2D3432",
-                        "admin-primary": "#ac8aff"
+                        "admin-bg": "var(--bg)",
+                        "admin-side": "var(--secondary)",
+                        "admin-primary": "var(--primary)"
                     }
                 },
             },
         }
     </script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #F5F5F3; margin: 0; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); margin: 0; }
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400; vertical-align: middle; }
         ::-webkit-scrollbar { display: none; }
         html { -ms-overflow-style: none; scrollbar-width: none; }
 
-        aside { position: fixed; left: 0; top: 0; height: 100vh; width: 220px; background-color: #2D3432; z-index: 1100; }
-        header { position: fixed; top: 0; right: 0; left: 220px; height: 64px; background: white; border-bottom: 1px solid rgba(0,0,0,0.05); z-index: 1000; display: flex; align-items: center; padding: 0 32px; justify-content: space-between; }
+        aside { position: fixed; left: 0; top: 0; height: 100vh; width: 220px; background-color: var(--secondary); z-index: 1100; }
+        header { position: fixed; top: 0; right: 0; left: 220px; height: 64px; background: var(--card); border-bottom: 1px solid rgba(24,32,47,0.08); z-index: 1000; display: flex; align-items: center; padding: 0 32px; justify-content: space-between; }
         main { margin-left: 220px; padding-top: 84px !important; min-height: 100vh; }
 
-        .nav-item { display: flex; align-items: center; gap: 12px; padding: 14px 20px; color: #ADB3B0; text-decoration: none; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; transition: all 0.2s; }
-        .nav-item:hover, .nav-item.active { color: white; background: rgba(172, 138, 255, 0.08); border-right: 4px solid #ac8aff; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 14px 20px; color: var(--muted); text-decoration: none; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; transition: all 0.2s; }
+        .nav-item:hover, .nav-item.active { color: var(--primary); background: rgba(109,93,246,0.10); border-right: 4px solid var(--primary); }
 
-        .filter-select { appearance: none; background-color: white; border: 1px solid #e2e8f0; padding: 0.75rem 2.5rem 0.75rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; color: #4a5568; cursor: pointer; outline: none; transition: all 0.2s; }
-        .filter-select:focus { border-color: #ac8aff; }
+        .filter-select { appearance: none; background-color: var(--card); border: 1px solid var(--border); padding: 0.75rem 2.5rem 0.75rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; color: var(--muted); cursor: pointer; outline: none; transition: all 0.2s; }
+        .filter-select:focus { border-color: var(--primary); }
 
         /* Toast Styling */
         #toast {
-            visibility: hidden; min-width: 250px; background-color: #2D3432; color: #fff;
+            visibility: hidden; min-width: 250px; background-color: var(--primary); color: var(--card);
             text-align: center; border-radius: 8px; padding: 16px; position: fixed;
             z-index: 3000; right: 30px; bottom: 30px; font-size: 14px; font-weight: 600;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(24,32,47,0.12);
         }
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
 
         /* Pagination Styling */
         .pagination-btn {
-            padding: 6px 12px; border: 1px solid #e2e8f0; border-radius: 4px;
-            font-size: 12px; font-weight: 600; transition: all 0.2s; background: white;
+            padding: 6px 12px; border: 1px solid var(--border); border-radius: 4px;
+            font-size: 12px; font-weight: 600; transition: all 0.2s; background: var(--card);
         }
         .pagination-btn.active {
-            background-color: #ac8aff; color: white; border-color: #ac8aff;
+            background-color: var(--primary); color: var(--card); border-color: var(--primary);
         }
         .pagination-btn:hover:not(.active) {
-            background-color: #f1f5f9;
+            background-color: var(--bg-card-h);
         }
     </style>
 </head>
@@ -71,14 +72,14 @@
 <div id="sidebar-placeholder"></div>
 
 <header>
-    <h2 class="text-lg font-bold text-[#2D3432] uppercase tracking-tight">Post Moderation</h2>
+    <h2 class="text-lg font-bold text-[var(--text)] uppercase tracking-tight">Post Moderation</h2>
     <div class="flex items-center gap-6">
-        <button class="relative text-slate-400 hover:text-[#ac8aff]"><span class="material-symbols-outlined">notifications</span></button>
+        <button class="relative text-slate-400 hover:text-[var(--primary)]"><span class="material-symbols-outlined">notifications</span></button>
     </div>
 </header>
 
 <main class="p-8">
-    <div class="flex flex-wrap items-center justify-between mb-8 bg-white/50 p-4 rounded-lg border border-slate-100 shadow-sm gap-4">
+    <div class="flex flex-wrap items-center justify-between mb-8 bg-[var(--card)]/50 p-4 rounded-lg border border-slate-100 shadow-sm gap-4">
         <div class="flex items-center gap-3">
 
             <div class="relative">
@@ -94,13 +95,13 @@
                     <span class="material-symbols-outlined text-[20px]">search</span>
                 </span>
                 <input id="search-input"
-                       class="w-full bg-white border border-slate-200 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#ac8aff]/20 transition-all"
+                       class="w-full bg-[var(--card)] border border-slate-200 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20 transition-all"
                        placeholder="Search titles..." type="text"/>
             </div>
         </div>
     </div>
 
-    <div class="bg-white shadow-sm border border-slate-100 overflow-hidden rounded-sm">
+    <div class="bg-[var(--card)] shadow-sm border border-slate-100 overflow-hidden rounded-sm">
         <table class="w-full text-left text-sm">
             <thead>
             <tr class="text-[10px] text-slate-400 uppercase border-b border-slate-50 font-bold bg-slate-50/50">
@@ -115,7 +116,7 @@
         </table>
     </div>
 
-    <div class="mt-6 flex justify-between items-center bg-white p-4 border border-slate-100 rounded-sm shadow-sm">
+    <div class="mt-6 flex justify-between items-center bg-[var(--card)] p-4 border border-slate-100 rounded-sm shadow-sm">
         <p class="text-xs text-slate-400 font-medium">
             Showing <span id="start-idx" class="font-bold text-slate-700">0</span> to <span id="end-idx" class="font-bold text-slate-700">0</span> of <span id="total-count" class="font-bold text-slate-700">0</span> posts
         </p>
@@ -213,7 +214,7 @@
                     <td class="p-6 font-mono text-[11px]">@${author}</td>
                     <td class="p-6 text-xs text-slate-400">${post.category?.name || 'Uncategorized'}</td>
                     <td class="p-6 text-right text-slate-300">
-                        <a href="/pages/post.html?id=${post.id}" target="_blank" class="hover:text-[#ac8aff] mr-3 inline-block">
+                        <a href="/pages/post.html?id=${post.id}" target="_blank" class="hover:text-[var(--primary)] mr-3 inline-block">
                             <span class="material-symbols-outlined text-lg">visibility</span>
                         </a>
                         <button onclick="deletePost('${post.id}')" class="hover:text-red-400">

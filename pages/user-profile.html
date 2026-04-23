@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="dark" lang="en">
+<html lang="en">
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -13,15 +13,15 @@
 
     <style>
         :root {
-            --surface:               #0b0e14;
-            --surface-container:     #151a22;
-            --surface-container-low: #10131b;
-            --surface-container-high:#1b202a;
-            --surface-variant:       #202631;
-            --on-surface:            #e0e5f5;
-            --on-surface-variant:    #a5abba;
-            --outline-variant:       #424855;
-            --primary:               #ac8aff;
+            --surface:               var(--bg);
+            --surface-container:     var(--card);
+            --surface-container-low: var(--secondary);
+            --surface-container-high:var(--bg-card-h);
+            --surface-variant:       var(--surface-variant);
+            --on-surface:            var(--text);
+            --on-surface-variant:    var(--muted);
+            --outline-variant:       var(--border);
+            --primary:               var(--primary);
         }
 
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
@@ -40,7 +40,7 @@
 
         .stats-row { display: flex; align-items: center; justify-content: center; gap: 1.5rem; margin: 1.5rem 0; }
         .stat-item { text-align: center; cursor: pointer; padding: 0.5rem; border-radius: 8px; transition: background 0.2s; }
-        .stat-item:hover { background: rgba(255,255,255,0.05); }
+        .stat-item:hover { background: var(--secondary); }
         .stat-value { font-family: 'Newsreader', serif; font-size: 1.25rem; font-weight: bold; color: var(--on-surface); display: block;}
         .stat-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--on-surface-variant); }
 
@@ -52,11 +52,11 @@
         .btn-edit { border: 1px solid var(--outline-variant); color: var(--on-surface); background: transparent; }
         .btn-edit:hover { background: var(--surface-variant); }
 
-        .btn-follow { border: none; color: #000; background: var(--on-surface); }
+        .btn-follow { border: none; color: var(--text); background: var(--on-surface); }
         .btn-follow:hover { opacity: 0.9; }
 
         .btn-unfollow { border: 1px solid var(--outline-variant); color: var(--on-surface); background: transparent; }
-        .btn-unfollow:hover { border-color: #ef4444; color: #ef4444; }
+        .btn-unfollow:hover { border-color: var(--red); color: var(--red); }
         /* Trick: Hover vào nút Đang theo dõi thì đổi chữ thành Hủy theo dõi */
         .btn-unfollow:hover span.follow-text { display: none; }
         .btn-unfollow:hover::after { content: 'Unfollow'; }
@@ -64,7 +64,7 @@
         .empty-state { text-align: center; padding: 4rem 0; color: var(--on-surface-variant); }
 
         /* Skeleton loading animation */
-        .sk { background: linear-gradient(90deg, #1b202a 25%, #202631 50%, #1b202a 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px; }
+        .sk { background: linear-gradient(90deg, var(--bg-card-h) 25%, var(--surface-variant) 50%, var(--bg-card-h) 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px; }
         @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
         /* ── CSS cho Modal Follow ── */
@@ -78,11 +78,11 @@
         .user-list-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
         .btn-sm-follow { padding: 0.3rem 1rem; font-size: 0.8rem; border-radius: 99px; cursor: pointer; font-weight: 500; transition: all 0.2s;}
         .btn-sm-follow.is-following { border: 1px solid var(--outline-variant); background: transparent; color: var(--on-surface); }
-        .btn-sm-follow.is-following:hover { border-color: #ef4444; color: #ef4444; }
+        .btn-sm-follow.is-following:hover { border-color: var(--red); color: var(--red); }
         .btn-sm-follow.is-following:hover span { display: none; }
         .btn-sm-follow.is-following:hover::after { content: 'Unfollow'; }
 
-        .btn-sm-follow.not-following { border: none; background: var(--on-surface); color: #000; }
+        .btn-sm-follow.not-following { border: none; background: var(--on-surface); color: var(--text); }
         .btn-sm-follow.not-following:hover { opacity: 0.8; }
     </style>
 </head>
@@ -110,7 +110,7 @@
                 <div class="position-sticky" style="top: 8rem;">
                     <div class="d-flex flex-column align-items-center mb-4">
                         <div class="avatar-ring">
-                            <img id="profile-avatar" alt="Avatar" src="https://placehold.co/400x400/151a22/a5abba?text=..."/>
+                            <img id="profile-avatar" alt="Avatar" src="https://placehold.co/400x400/f8fafc/667085?text=..."/>
                         </div>
 
                         <div class="text-center mb-3">
@@ -155,7 +155,7 @@
         <div class="modal-content">
             <div class="modal-header border-0 pb-0">
                 <h5 class="modal-title fw-bold" id="followModalTitle">Followers</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <input type="text" id="follow-search-input" class="search-user-input" placeholder="Search users...">
@@ -261,7 +261,7 @@
             if (user.avatarUrl) {
                 $('#profile-avatar').attr('src', user.avatarUrl);
             } else {
-                $('#profile-avatar').attr('src', `https://ui-avatars.com/api/?name=${user.username}&background=151a22&color=ac8aff`);
+                $('#profile-avatar').attr('src', `https://ui-avatars.com/api/?name=${user.username}&background=f8fafc&color=6d5df6`);
             }
 
             if (user.createdAt) {
@@ -348,7 +348,7 @@
                     <h3>No blogs published yet</h3>
                     <p class="mx-auto mt-2">This space is waiting for stories to be told.</p>
                     ${(currentUser && currentUser === username)
-                    ? '<a href="/pages/blog-editor.html" class="btn-action btn-follow text-decoration-none mt-4 mx-auto" style="width: auto; padding: 0.6rem 1.5rem; color: #000;">Write a story</a>'
+                    ? '<a href="/pages/blog-editor.html" class="btn-action btn-follow text-decoration-none mt-4 mx-auto" style="width: auto; padding: 0.6rem 1.5rem; color: var(--text);">Write a story</a>'
                     : ''}
                 </div>
             `);
@@ -409,7 +409,7 @@
         const currentUser = localStorage.getItem('username');
 
         filteredList.forEach(u => {
-            const avatarUrl = u.avatarUrl || `https://ui-avatars.com/api/?name=${u.username}&background=151a22&color=ac8aff`;
+            const avatarUrl = u.avatarUrl || `https://ui-avatars.com/api/?name=${u.username}&background=f8fafc&color=6d5df6`;
             const nameToDisplay = u.fullName || u.username;
 
             // Xây dựng giao diện cho 1 người dùng

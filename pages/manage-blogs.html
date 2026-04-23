@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="dark" lang="en">
+<html lang="en">
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -14,13 +14,13 @@
 
     <script id="tailwind-config">
         tailwind.config = {
-            darkMode: "class",
+            
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#ac8aff", "background": "#0b0e14",
-                        "surface-container-low": "#10131b", "outline-variant": "#424855",
-                        "on-surface": "#e0e5f5", "on-surface-variant": "#a5abba"
+                        "primary": "var(--primary)", "background": "var(--bg)",
+                        "surface-container-low": "var(--secondary)", "outline-variant": "var(--border)",
+                        "on-surface": "var(--text)", "on-surface-variant": "var(--muted)"
                     }
                 },
             },
@@ -28,13 +28,13 @@
     </script>
     <style>
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        body { background-color: #0b0e14 !important; color: #e0e5f5; font-family: 'Inter', sans-serif; margin: 0; }
+        body { background-color: var(--bg) !important; color: var(--text); font-family: 'Inter', sans-serif; margin: 0; }
         ::-webkit-scrollbar { display: none; }
         html { -ms-overflow-style: none; scrollbar-width: none; }
 
-        #navbar-container { position: fixed; top: 0; width: 100%; z-index: 1050; background: #0b0e14; border-bottom: 1px solid rgba(66,72,85,0.15); }
+        #navbar-container { position: fixed; top: 0; width: 100%; z-index: 1050; background: var(--bg); border-bottom: 1px solid rgba(66,72,85,0.15); }
         .no-underline { text-decoration: none !important; }
-        .tab-btn.active { color: #ac8aff; border-bottom: 2px solid #ac8aff; font-weight: bold; }
+        .tab-btn.active { color: var(--primary); border-bottom: 2px solid var(--primary); font-weight: bold; }
     </style>
 </head>
 <body class="overflow-x-hidden bg-background no-global-search">
@@ -53,7 +53,7 @@
         <section class="mb-8 flex gap-4">
             <div class="flex-1 relative">
                 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-                <input id="dashboard-search" class="w-full bg-[#151a22] border border-outline-variant/30 rounded-xl pl-12 pr-4 py-4 text-on-surface outline-none focus:ring-2 focus:ring-primary/40" placeholder="Search blogs..." type="text"/>
+                <input id="dashboard-search" class="w-full bg-[var(--card)] border border-outline-variant/30 rounded-xl pl-12 pr-4 py-4 text-on-surface outline-none focus:ring-2 focus:ring-primary/40" placeholder="Search blogs..." type="text"/>
             </div>
         </section>
 
@@ -128,28 +128,28 @@
             let pubCount = 0, draftCount = 0;
 
             blogs.forEach(p => {
-                const bannerUrl = p.banner ? p.banner : 'https://placehold.co/600x400/151a22/a5abba?text=No+Image';
+                const bannerUrl = p.banner ? p.banner : 'https://placehold.co/600x400/f8fafc/667085?text=No+Image';
                 const dateStr = fmtDate(p.createdAt);
 
                 if (p.draft === false) {
                     pubCount++;
                     $pubList.append(`
-                        <article class="bg-[#151a22] rounded-xl overflow-hidden hover:bg-[#1b202a] transition-all flex items-center p-3 gap-4 border border-outline-variant/5">
+                        <article class="bg-[var(--card)] rounded-xl overflow-hidden hover:bg-[var(--bg-card-h)] transition-all flex items-center p-3 gap-4 border border-outline-variant/5">
                             <div class="w-20 h-20 md:w-28 md:h-28 flex-shrink-0 rounded-lg overflow-hidden cursor-pointer" onclick="window.location.href='/pages/post.html?id=${p.slug}'">
                                 <img class="w-full h-full object-cover" src="${bannerUrl}" alt="Banner"/>
                             </div>
                             <div class="flex-1 flex flex-col md:flex-row md:items-center justify-between gap-4">
                                 <div>
-                                    <h3 class="font-['Newsreader'] text-lg md:text-xl font-bold text-on-surface"><a href="post.html?id=${p.slug}" class="text-white no-underline hover:text-primary">${p.title}</a></h3>
+                                    <h3 class="font-['Newsreader'] text-lg md:text-xl font-bold text-on-surface"><a href="post.html?id=${p.slug}" class="text-[var(--text)] no-underline hover:text-primary">${p.title}</a></h3>
                                     <p class="text-on-surface-variant text-[11px]">Published on ${dateStr}</p>
                                     <div class="flex gap-2 mt-3">
-                                        <a href="blog-editor.html?id=${p.slug}" class="px-3 py-1 rounded-full border border-outline-variant/30 text-[10px] hover:bg-primary hover:text-[#000] no-underline">Edit</a>
-                                        <button onclick="deleteBlog('${p.id}')" class="px-3 py-1 rounded-full border border-red-500/30 text-red-400 text-[10px] hover:bg-red-500 hover:text-white">Delete</button>
+                                        <a href="blog-editor.html?id=${p.slug}" class="px-3 py-1 rounded-full border border-outline-variant/30 text-[10px] hover:bg-primary hover:text-[var(--text)] no-underline">Edit</a>
+                                        <button onclick="deleteBlog('${p.id}')" class="px-3 py-1 rounded-full border border-red-500/30 text-red-400 text-[10px] hover:bg-red-500 hover:text-[var(--card)]">Delete</button>
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-6">
                                     <div class="text-center"><span class="block text-base font-bold text-primary">${p.totalLikes || 0}</span><span class="text-[8px] uppercase text-on-surface-variant">Likes</span></div>
-                                    <div class="text-center"><span class="block text-base font-bold text-[#89ceff]">${p.totalComments || 0}</span><span class="text-[8px] uppercase text-on-surface-variant">Comments</span></div>
+                                    <div class="text-center"><span class="block text-base font-bold text-[var(--primary)]">${p.totalComments || 0}</span><span class="text-[8px] uppercase text-on-surface-variant">Comments</span></div>
                                 </div>
                             </div>
                         </article>
@@ -157,7 +157,7 @@
                 } else {
                     draftCount++;
                     $draftList.append(`
-                        <article class="bg-[#151a22] rounded-xl overflow-hidden hover:bg-[#1b202a] transition-all flex items-center p-3 gap-4 border border-outline-variant/5">
+                        <article class="bg-[var(--card)] rounded-xl overflow-hidden hover:bg-[var(--bg-card-h)] transition-all flex items-center p-3 gap-4 border border-outline-variant/5">
                             <div class="w-20 h-20 md:w-28 md:h-28 flex-shrink-0 rounded-lg overflow-hidden cursor-pointer" onclick="window.location.href='/pages/blog-editor.html?id=${p.slug}'">
                                 <img class="w-full h-full object-cover grayscale opacity-50" src="${bannerUrl}" alt="Banner"/>
                             </div>
@@ -166,8 +166,8 @@
                                     <h3 class="font-['Newsreader'] text-lg md:text-xl font-bold text-on-surface-variant">[Draft] ${p.title}</h3>
                                     <p class="text-on-surface-variant text-[11px]">Created on ${dateStr}</p>
                                     <div class="flex gap-2 mt-3">
-                                        <a href="blog-editor.html?id=${p.slug}" class="px-3 py-1 rounded-full border border-outline-variant/30 text-[10px] hover:bg-primary hover:text-[#000] no-underline">Continue Writing</a>
-                                        <button onclick="deleteBlog('${p.id}')" class="px-3 py-1 rounded-full border border-red-500/30 text-red-400 text-[10px] hover:bg-red-500 hover:text-white">Delete</button>
+                                        <a href="blog-editor.html?id=${p.slug}" class="px-3 py-1 rounded-full border border-outline-variant/30 text-[10px] hover:bg-primary hover:text-[var(--text)] no-underline">Continue Writing</a>
+                                        <button onclick="deleteBlog('${p.id}')" class="px-3 py-1 rounded-full border border-red-500/30 text-red-400 text-[10px] hover:bg-red-500 hover:text-[var(--card)]">Delete</button>
                                     </div>
                                 </div>
                                 <div class="px-4 py-1 bg-outline-variant/10 rounded text-[10px] uppercase text-on-surface-variant">Not Published</div>

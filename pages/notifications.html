@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="dark" lang="en">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -13,10 +13,10 @@
 
     <style>
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400; }
-        body { background-color: #0b0e14 !important; color: #e0e5f5; font-family: 'Inter', sans-serif; margin: 0; }
+        body { background-color: var(--bg) !important; color: var(--text); font-family: 'Inter', sans-serif; margin: 0; }
         ::-webkit-scrollbar { display: none; }
         html { -ms-overflow-style: none; scrollbar-width: none; }
-        #navbar-container { position: fixed; top: 0; width: 100%; z-index: 1050; background: #0b0e14; border-bottom: 1px solid rgba(66,72,85,0.15);}
+        #navbar-container { position: fixed; top: 0; width: 100%; z-index: 1050; background: var(--bg); border-bottom: 1px solid rgba(66,72,85,0.15);}
         .no-underline { text-decoration: none !important; }
 
         /* Animation cho list thông báo */
@@ -33,13 +33,13 @@
 
 <div class="flex flex-col min-h-screen" style="padding-top: 100px;">
     <main class="flex-1 p-6 md:p-10 max-w-3xl mx-auto w-full">
-        <header class="mb-10 border-b border-[#424855]/20 pb-6">
-            <h2 class="font-['Newsreader'] text-4xl font-bold text-[#e0e5f5] mb-2 italic tracking-tight">Notifications</h2>
-            <p class="text-[#a5abba] text-sm">See the latest activity from your community.</p>
+        <header class="mb-10 border-b border-[var(--border)] pb-6">
+            <h2 class="font-['Newsreader'] text-4xl font-bold text-[var(--text)] mb-2 italic tracking-tight">Notifications</h2>
+            <p class="text-[var(--muted)] text-sm">See the latest activity from your community.</p>
         </header>
 
         <div id="notif-list" class="space-y-4 pb-20">
-            <div class="text-center py-10 text-[#a5abba] flex flex-col items-center gap-3">
+            <div class="text-center py-10 text-[var(--muted)] flex flex-col items-center gap-3">
                 <span class="material-symbols-outlined" style="animation: spin 1s linear infinite; font-size: 2rem; color: var(--primary);">sync</span>
                 <span>Loading...</span>
             </div>
@@ -75,12 +75,12 @@
 
             if(notifs.length === 0) {
                 $list.html(`
-                    <div class="flex flex-col items-center justify-center py-20 px-4 bg-[#151a22]/40 rounded-3xl border border-[#424855]/20 backdrop-blur-sm">
-                        <div class="w-20 h-20 bg-[#1b202a] rounded-full flex items-center justify-center mb-6 shadow-inner border border-[#424855]/30">
-                            <span class="material-symbols-outlined text-5xl text-[#a5abba]/50" style="font-variation-settings: 'FILL' 0;">notifications_off</span>
+                    <div class="flex flex-col items-center justify-center py-20 px-4 bg-[var(--card)] rounded-3xl border border-[var(--border)] backdrop-blur-sm">
+                        <div class="w-20 h-20 bg-[var(--bg-card-h)] rounded-full flex items-center justify-center mb-6 shadow-inner border border-[var(--border)]">
+                            <span class="material-symbols-outlined text-5xl text-[var(--muted)]/50" style="font-variation-settings: 'FILL' 0;">notifications_off</span>
                         </div>
-                        <h3 class="text-xl font-['Newsreader'] font-bold text-[#e0e5f5] mb-2">No notifications yet</h3>
-                        <p class="text-sm text-[#a5abba] max-w-sm text-center leading-relaxed">You'll see notifications here when someone interacts with your posts or follows you.</p>
+                        <h3 class="text-xl font-['Newsreader'] font-bold text-[var(--text)] mb-2">No notifications yet</h3>
+                        <p class="text-sm text-[var(--muted)] max-w-sm text-center leading-relaxed">You'll see notifications here when someone interacts with your posts or follows you.</p>
                     </div>
                 `);
                 return;
@@ -91,21 +91,21 @@
 
                 // Phân loại Icon và Màu sắc
                 if(n.type === 'LIKE') {
-                    icon = 'favorite'; colorClass = 'text-[#ac8aff]'; bgClass = 'bg-[#ac8aff]/10 border border-[#ac8aff]/20';
+                    icon = 'favorite'; colorClass = 'text-[var(--primary)]'; bgClass = 'bg-[var(--primary)]/10 border border-[var(--primary)]/20';
                 } else if(n.type === 'COMMENT' || n.type === 'REPLY') {
-                    icon = 'chat_bubble'; colorClass = 'text-[#89ceff]'; bgClass = 'bg-[#89ceff]/10 border border-[#89ceff]/20';
+                    icon = 'chat_bubble'; colorClass = 'text-[var(--primary)]'; bgClass = 'bg-[var(--primary)]/10 border border-[var(--primary)]/20';
                 } else if(n.type === 'FOLLOW') {
-                    icon = 'person_add'; colorClass = 'text-[#c9f791]'; bgClass = 'bg-[#c9f791]/10 border border-[#c9f791]/20';
+                    icon = 'person_add'; colorClass = 'text-[var(--teal)]'; bgClass = 'bg-[var(--teal)]/10 border border-[var(--teal)]/20';
                 }
 
                 // Format lại nội dung: In đậm @username
-                let formattedMessage = n.message.replace(/@(\w+)/g, '<span class="font-bold text-white tracking-wide">@$1</span>');
+                let formattedMessage = n.message.replace(/@(\w+)/g, '<span class="font-bold text-[var(--card)] tracking-wide">@$1</span>');
 
                 // Style dựa trên trạng thái (Đã đọc / Chưa đọc)
-                const unreadBar = !n.read ? `<div class="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-10 bg-[#ac8aff] rounded-r-full shadow-[0_0_10px_rgba(172,138,255,0.8)]"></div>` : '';
+                const unreadBar = !n.read ? `<div class="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-10 bg-[var(--primary)] rounded-r-full shadow-[0_0_10px_rgba(172,138,255,0.8)]"></div>` : '';
                 const cardBaseStyle = !n.read
-                    ? 'bg-gradient-to-r from-[#151a22] to-[#151a22] hover:to-[#1b202a] border-[#ac8aff]/30 shadow-[0_4px_20px_rgba(0,0,0,0.2)]'
-                    : 'bg-[#0b0e14] border-[#424855]/20 opacity-80 hover:opacity-100 hover:bg-[#151a22]';
+                    ? 'bg-gradient-to-r from-[var(--card)] to-[var(--card)] hover:to-[var(--bg-card-h)] border-[var(--primary)] shadow-[0_4px_20px_rgba(24,32,47,0.12)]'
+                    : 'bg-[var(--bg)] border-[var(--border)] opacity-80 hover:opacity-100 hover:bg-[var(--card)]';
 
                 const dateStr = fmtDate(n.createdAt);
 
@@ -125,15 +125,15 @@
                         </div>
 
                         <div class="flex-1 pr-10">
-                            <p class="text-[0.95rem] text-[#e0e5f5] leading-relaxed">${formattedMessage}</p>
-                            <div class="flex items-center gap-1.5 mt-2.5 text-[#a5abba] text-[0.7rem] font-medium uppercase tracking-[0.05em]">
+                            <p class="text-[0.95rem] text-[var(--text)] leading-relaxed">${formattedMessage}</p>
+                            <div class="flex items-center gap-1.5 mt-2.5 text-[var(--muted)] text-[0.7rem] font-medium uppercase tracking-[0.05em]">
                                 <span class="material-symbols-outlined text-[14px]">schedule</span>
                                 ${dateStr}
                             </div>
                         </div>
 
                         <button onclick="deleteNotif('${n.id}', event)"
-                                class="absolute top-1/2 -translate-y-1/2 right-4 md:right-6 w-9 h-9 flex items-center justify-center rounded-full text-[#a5abba] opacity-0 group-hover:opacity-100 hover:bg-red-500/10 hover:text-red-500 transition-all duration-200"
+                                class="absolute top-1/2 -translate-y-1/2 right-4 md:right-6 w-9 h-9 flex items-center justify-center rounded-full text-[var(--muted)] opacity-0 group-hover:opacity-100 hover:bg-red-500/10 hover:text-red-500 transition-all duration-200"
                                 title="Xóa thông báo">
                             <span class="material-symbols-outlined text-[1.2rem]">delete</span>
                         </button>

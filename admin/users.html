@@ -8,48 +8,49 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="/assets/css/main.css"/>
 
     <script id="tailwind-config">
         tailwind.config = {
-            darkMode: "class",
+            
             theme: {
                 extend: {
                     colors: {
-                        "admin-bg": "#F5F5F3",
-                        "admin-side": "#2D3432",
-                        "admin-primary": "#ac8aff"
+                        "admin-bg": "var(--bg)",
+                        "admin-side": "var(--secondary)",
+                        "admin-primary": "var(--primary)"
                     }
                 },
             },
         }
     </script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #F5F5F3; margin: 0; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); margin: 0; }
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400; vertical-align: middle; }
         ::-webkit-scrollbar { display: none; }
         html { -ms-overflow-style: none; scrollbar-width: none; }
 
         /* Sidebar & Navbar Layout */
-        aside { position: fixed; left: 0; top: 0; height: 100vh; width: 220px; background-color: #2D3432; z-index: 1100; }
-        header { position: fixed; top: 0; right: 0; left: 220px; height: 64px; background: white; border-bottom: 1px solid rgba(0,0,0,0.05); z-index: 1000; display: flex; align-items: center; padding: 0 32px; justify-content: space-between; }
+        aside { position: fixed; left: 0; top: 0; height: 100vh; width: 220px; background-color: var(--secondary); z-index: 1100; }
+        header { position: fixed; top: 0; right: 0; left: 220px; height: 64px; background: var(--card); border-bottom: 1px solid rgba(24,32,47,0.08); z-index: 1000; display: flex; align-items: center; padding: 0 32px; justify-content: space-between; }
         main { margin-left: 220px; padding-top: 84px !important; min-height: 100vh; }
 
-        .nav-item { display: flex; align-items: center; gap: 12px; padding: 14px 20px; color: #ADB3B0; text-decoration: none; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; transition: all 0.2s; }
-        .nav-item:hover, .nav-item.active { color: white; background: rgba(172, 138, 255, 0.08); border-right: 4px solid #ac8aff; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 14px 20px; color: var(--muted); text-decoration: none; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; transition: all 0.2s; }
+        .nav-item:hover, .nav-item.active { color: var(--primary); background: rgba(109,93,246,0.10); border-right: 4px solid var(--primary); }
 
         /* Modal Styles */
         #userModal {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+            display: none; position: fixed; inset: 0; background: var(--overlay);
             backdrop-filter: blur(4px); z-index: 2000; align-items: center; justify-content: center;
         }
         #userModal.active { display: flex; }
 
         /* Toast Styling */
         #toast {
-            visibility: hidden; min-width: 250px; background-color: #2D3432; color: #fff;
+            visibility: hidden; min-width: 250px; background-color: var(--primary); color: var(--card);
             text-align: center; border-radius: 8px; padding: 16px; position: fixed;
             z-index: 3000; right: 30px; bottom: 30px; font-size: 14px; font-weight: 600;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(24,32,47,0.12);
         }
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
@@ -62,25 +63,25 @@
 <div id="sidebar-placeholder"></div>
 
 <header>
-    <h2 class="text-lg font-bold text-[#2D3432] uppercase tracking-tight">User Management</h2>
+    <h2 class="text-lg font-bold text-[var(--text)] uppercase tracking-tight">User Management</h2>
     <div class="flex items-center gap-6">
-        <button class="relative text-slate-400 hover:text-[#ac8aff]"><span class="material-symbols-outlined">notifications</span></button>
+        <button class="relative text-slate-400 hover:text-[var(--primary)]"><span class="material-symbols-outlined">notifications</span></button>
     </div>
 </header>
 
 <main class="p-8">
-    <div class="flex justify-between items-center mb-8 bg-white/50 p-4 rounded-lg border border-slate-100 shadow-sm">
+    <div class="flex justify-between items-center mb-8 bg-[var(--card)]/50 p-4 rounded-lg border border-slate-100 shadow-sm">
         <div class="relative w-full max-w-md">
             <span class="absolute inset-y-0 left-3 flex items-center text-slate-400"><span class="material-symbols-outlined text-[20px]">search</span></span>
-            <input id="search-input" class="w-full bg-white border border-slate-200 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#ac8aff]/20 transition-all" placeholder="Search users by username or email..." type="text"/>
+            <input id="search-input" class="w-full bg-[var(--card)] border border-slate-200 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20 transition-all" placeholder="Search users by username or email..." type="text"/>
         </div>
-        <button onclick="openCreateModal()" class="bg-[#2D3432] text-white px-6 py-3 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-black transition-colors shadow-lg">
+        <button onclick="openCreateModal()" class="bg-[var(--primary)] text-[var(--card)] px-6 py-3 rounded-lg font-bold text-sm flex items-center gap-2 hover:opacity-90 transition-colors shadow-lg">
             <span class="material-symbols-outlined text-[20px]">person_add</span>
             CREATE NEW USER
         </button>
     </div>
 
-    <div class="bg-white shadow-sm border border-slate-100 overflow-hidden rounded-sm">
+    <div class="bg-[var(--card)] shadow-sm border border-slate-100 overflow-hidden rounded-sm">
         <table class="w-full text-left text-sm">
             <thead>
             <tr class="text-[10px] text-slate-400 uppercase border-b border-slate-50 font-bold bg-slate-50/50">
@@ -97,9 +98,9 @@
 </main>
 
 <div id="userModal" onclick="if(event.target == this) toggleModal(false)">
-    <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden transform transition-all scale-95 opacity-0 duration-200" id="modalContent">
+    <div class="bg-[var(--card)] w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden transform transition-all scale-95 opacity-0 duration-200" id="modalContent">
         <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-            <h3 id="modal-title" class="font-bold text-lg text-[#2D3432] uppercase tracking-tight">Add New User</h3>
+            <h3 id="modal-title" class="font-bold text-lg text-[var(--text)] uppercase tracking-tight">Add New User</h3>
             <button type="button" onclick="toggleModal(false)" class="text-slate-400 hover:text-slate-600 transition-colors">
                 <span class="material-symbols-outlined">close</span>
             </button>
@@ -111,7 +112,7 @@
                 <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Username <span class="text-red-500">*</span></label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-3 flex items-center text-slate-300"><span class="material-symbols-outlined text-[18px]">person</span></span>
-                    <input type="text" id="modal-username" required class="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-[#ac8aff]/20 focus:border-[#ac8aff] outline-none transition-all" placeholder="Enter username">
+                    <input type="text" id="modal-username" required class="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-[var(--primary)]/20 focus:border-[var(--primary)] outline-none transition-all" placeholder="Enter username">
                 </div>
             </div>
 
@@ -119,7 +120,7 @@
                 <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Password <span class="text-red-500">*</span></label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-3 flex items-center text-slate-300"><span class="material-symbols-outlined text-[18px]">lock</span></span>
-                    <input type="password" id="modal-password" class="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-[#ac8aff]/20 focus:border-[#ac8aff] outline-none transition-all" placeholder="Enter password">
+                    <input type="password" id="modal-password" class="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-[var(--primary)]/20 focus:border-[var(--primary)] outline-none transition-all" placeholder="Enter password">
                 </div>
             </div>
 
@@ -127,7 +128,7 @@
                 <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Email Address</label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-3 flex items-center text-slate-300"><span class="material-symbols-outlined text-[18px]">mail</span></span>
-                    <input type="email" id="modal-email" class="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-[#ac8aff]/20 focus:border-[#ac8aff] outline-none transition-all" placeholder="Optional email">
+                    <input type="email" id="modal-email" class="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-[var(--primary)]/20 focus:border-[var(--primary)] outline-none transition-all" placeholder="Optional email">
                 </div>
             </div>
 
@@ -135,7 +136,7 @@
                 <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Assign Role</label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-3 flex items-center text-slate-300"><span class="material-symbols-outlined text-[18px]">shield_person</span></span>
-                    <select id="modal-role" class="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-[#ac8aff]/20 focus:border-[#ac8aff] outline-none bg-white appearance-none cursor-pointer">
+                    <select id="modal-role" class="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-[var(--primary)]/20 focus:border-[var(--primary)] outline-none bg-[var(--card)] appearance-none cursor-pointer">
                         <option value="USER">User</option>
                         <option value="ADMIN">Admin</option>
                     </select>
@@ -144,7 +145,7 @@
 
             <div class="pt-2 flex gap-3">
                 <button type="button" onclick="toggleModal(false)" class="flex-1 py-2.5 bg-slate-100 text-sm font-bold text-slate-500 rounded-xl hover:bg-slate-200 transition-colors uppercase tracking-widest">Cancel</button>
-                <button type="submit" class="flex-1 py-2.5 bg-[#2D3432] text-white rounded-xl text-sm font-bold hover:bg-black shadow-lg transition-all uppercase tracking-widest">Save User</button>
+                <button type="submit" class="flex-1 py-2.5 bg-[var(--primary)] text-[var(--card)] rounded-xl text-sm font-bold hover:opacity-90 shadow-lg transition-all uppercase tracking-widest">Save User</button>
             </div>
         </form>
     </div>
@@ -209,7 +210,7 @@
             const isAdmin = user.roles && user.roles.includes('ADMIN');
 
             const roleBadge = isAdmin
-                ? '<span class="px-2 py-0.5 bg-purple-50 text-[#ac8aff] text-[10px] font-bold rounded uppercase">Admin</span>'
+                ? '<span class="px-2 py-0.5 bg-purple-50 text-[var(--primary)] text-[10px] font-bold rounded uppercase">Admin</span>'
                 : '<span class="px-2 py-0.5 bg-slate-100 text-slate-500 text-[10px] font-bold rounded uppercase">User</span>';
 
             const emailDisplay = user.email
@@ -234,7 +235,7 @@
                     <td class="p-6 font-mono text-xs text-slate-500">${emailDisplay}</td>
                     <td class="p-6">${roleBadge}</td>
                     <td class="p-6 text-right text-slate-300">
-                        <button onclick="openEditModal('${user.id}')" class="hover:text-[#ac8aff] transition-colors" title="Edit User">
+                        <button onclick="openEditModal('${user.id}')" class="hover:text-[var(--primary)] transition-colors" title="Edit User">
                             <span class="material-symbols-outlined text-lg">edit</span>
                         </button>
                     </td>

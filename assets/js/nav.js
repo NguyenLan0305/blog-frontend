@@ -52,9 +52,9 @@ function updateNavAuth() {
         // --- CẬP NHẬT GIAO DIỆN THEO QUYỀN ---
         if (isAdmin) {
             $('#btn-desk-admin').show();
-            $('#btn-mob-admin').attr('style', 'display: flex !important; color: #ac8aff; font-weight: 600;');
+            $('#btn-mob-admin').attr('style', 'display: flex !important; color: var(--primary); font-weight: 600;');
             $('.d-role').text('Admin'); // Đổi chữ Author thành Admin
-            $('.d-role').css('color', '#ac8aff'); // Đổi màu chữ cho ngầu
+            $('.d-role').css('color', 'var(--primary)'); // Đổi màu chữ cho ngầu
         } else {
             $('#btn-desk-admin').hide();
             $('#btn-mob-admin').attr('style', 'display: none !important;');

@@ -9,8 +9,8 @@ var CAT_COLORS_ARRAY = [
     { bg:'rgba(124,111,247,.1)', bd:'rgba(124,111,247,.25)', fg:'var(--purple)' },
     { bg:'rgba(62,207,176,.08)', bd:'rgba(62,207,176,.25)',  fg:'var(--teal)'   },
     { bg:'rgba(233,168,76,.08)', bd:'rgba(233,168,76,.25)', fg:'var(--gold)'   },
-    { bg:'rgba(251,191,36,.08)', bd:'rgba(251,191,36,.2)',  fg:'#fbbf24'       },
-    { bg:'rgba(248,113,113,.08)',bd:'rgba(248,113,113,.2)', fg:'#f87171'       }
+    { bg:'rgba(251,191,36,.08)', bd:'rgba(251,191,36,.2)',  fg:'var(--gold)'       },
+    { bg:'rgba(248,113,113,.08)',bd:'rgba(248,113,113,.2)', fg:'var(--red)'       }
 ];
 
 function buildCatPage() {

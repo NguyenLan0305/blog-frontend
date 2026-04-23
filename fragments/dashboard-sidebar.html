@@ -1,13 +1,13 @@
-<aside class="hidden md:flex w-64 fixed left-0 bg-[#0b0e14] flex flex-col py-8 px-6 space-y-8 border-r border-[#424855]/15" style="top: 72px; height: calc(100vh - 72px); z-index: 1040;">
+<aside class="hidden md:flex w-64 fixed left-0 bg-[var(--bg)] flex flex-col py-8 px-6 space-y-8 border-r border-[var(--border)]" style="top: 72px; height: calc(100vh - 72px); z-index: 1040;">
     <div class="px-2">
-        <h3 class="font-['Newsreader'] text-xl text-[#e0e5f5] italic">Editorial Studio</h3>
-        <p class="text-[10px] text-[#a5abba] uppercase tracking-widest mt-1">Workspace</p>
+        <h3 class="font-['Newsreader'] text-xl text-[var(--text)] italic">Editorial Studio</h3>
+        <p class="text-[10px] text-[var(--muted)] uppercase tracking-widest mt-1">Workspace</p>
     </div>
 
     <nav class="flex-1 overflow-y-auto space-y-6 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
 
         <div class="space-y-2">
-            <p class="px-4 text-[10px] font-bold text-[#a5abba]/50 uppercase tracking-[0.2em]">Dashboard</p>
+            <p class="px-4 text-[10px] font-bold text-[var(--muted)]/50 uppercase tracking-[0.2em]">Dashboard</p>
             <div class="space-y-1">
                 <a class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-['Inter'] text-sm uppercase no-underline" href="/pages/manage-blogs.html">
                     <span class="material-symbols-outlined">article</span> <span>Blog</span>
@@ -22,7 +22,7 @@
         </div>
 
         <div class="space-y-2">
-            <p class="px-4 text-[10px] font-bold text-[#a5abba]/50 uppercase tracking-[0.2em]">Settings</p>
+            <p class="px-4 text-[10px] font-bold text-[var(--muted)]/50 uppercase tracking-[0.2em]">Settings</p>
             <div class="space-y-1">
                 <a class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-['Inter'] text-sm uppercase no-underline" href="/pages/edit-profile.html">
                     <span class="material-symbols-outlined">manage_accounts</span> <span>Edit Profile</span>
@@ -35,7 +35,7 @@
     </nav>
 
     <div class="mt-auto space-y-2">
-        <a id="btn-logout-sidebar" class="flex items-center gap-3 px-4 py-2 text-[#a5abba] hover:text-red-400 no-underline text-xs transition-colors cursor-pointer">
+        <a id="btn-logout-sidebar" class="flex items-center gap-3 px-4 py-2 text-[var(--muted)] hover:text-red-400 no-underline text-xs transition-colors cursor-pointer">
             <span class="material-symbols-outlined text-lg">logout</span> <span>Sign Out</span>
         </a>
     </div>
@@ -46,8 +46,8 @@
         var path = window.location.pathname;
         var page = path.split("/").pop().toLowerCase();
 
-        var activeClasses = "text-[#ac8aff] border-r-2 border-[#ac8aff] bg-gradient-to-r from-[#ac8aff]/10 to-transparent font-bold";
-        var inactiveClasses = "text-[#a5abba] hover:bg-[#10131b] hover:text-[#e0e5f5]";
+        var activeClasses = "text-[var(--primary)] border-r-2 border-[var(--primary)] bg-gradient-to-r from-[var(--primary)]/10 to-transparent font-bold";
+        var inactiveClasses = "text-[var(--muted)] hover:bg-[var(--secondary)] hover:text-[var(--text)]";
 
         $('.sidebar-link').each(function() {
             var href = $(this).attr('href').toLowerCase();
