@@ -157,11 +157,12 @@
     }
 
     function loadPosts() {
-        const token = localStorage.getItem('token');
         $.ajax({
             url: `${API_BASE}/blogs`,
             type: 'GET',
-            headers: { 'Authorization': 'Bearer ' + token },
+            xhrFields: {
+                withCredentials: true // Đã thay thế header cũ bằng cấu hình Cookie
+            },
             success: function(res) {
                 // Đảm bảo chỉ lấy các post đã xuất bản (không nháp) từ phía FE nếu API gửi cả đống
                 allPosts = (res.result || []).filter(p => !p.draft);
@@ -246,7 +247,9 @@
         $.ajax({
             url: `${API_BASE}/blogs/${id}`,
             type: 'DELETE',
-            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+            xhrFields: {
+                withCredentials: true
+            },
             success: function() {
                 allPosts = allPosts.filter(p => p.id !== id);
 

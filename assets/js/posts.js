@@ -46,7 +46,7 @@ function buildCard(p) {
     let readingTime = Math.ceil((plainTextContent.split(/\s+/).length || 1) / 200);
     if (readingTime === 0) readingTime = 1;
 
-    // 🔥 XỬ LÝ DANH SÁCH TAG (Nằm gọn ngang hàng, fix lỗi ##) 🔥
+    // XỬ LÝ DANH SÁCH TAG
     let tagsHtml = '';
     if (p.tags && p.tags.length > 0) {
         tagsHtml = '<div class="d-flex align-items-center flex-wrap gap-2">';

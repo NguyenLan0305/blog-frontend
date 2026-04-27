@@ -7,16 +7,12 @@ function renderAuth() {
     var $d = $('#auth-area').empty();
     var $m = $('#mob-auth').empty();
 
-    // 2. Kiểm tra trạng thái thực tế
-    const token = localStorage.getItem('token');
-    const uname = localStorage.getItem('username'); // Sẽ lấy từ localStorage
-
-    // Kiểm tra xem có Token không
-    const isAuth = token !== null && token !== "";
+    // 2.Chỉ dựa vào Username để xác định trạng thái UI
+    const uname = localStorage.getItem('username');
+    const isAuth = (uname !== null && uname.trim() !== "");
 
     if (isAuth) {
         /* ─────────────── TRẠNG THÁI: ĐÃ ĐĂNG NHẬP ─────────────── */
-        // Tên hiển thị (Nếu không có tên thì để Guest)
         const displayName = uname || 'Guest';
 
         /* Desktop: Nút chức năng */
@@ -28,7 +24,6 @@ function renderAuth() {
 
         /* Avatar + Dropdown */
         var $wrap = $('<div style="position:relative;"></div>');
-        // Hàm initials() lấy chữ cái đầu của tên (Ví dụ: "lan" -> "L")
         var $av   = $('<div class="avatar">').text(initials(displayName)).attr('title', displayName);
         var $dd   = $('<div class="user-dd">');
 
@@ -49,7 +44,7 @@ function renderAuth() {
 
         $av.on('click', function(e){
             e.stopPropagation();
-            $('.user-dd').not($dd).removeClass('open'); // Đóng các dropdown khác nếu có
+            $('.user-dd').not($dd).removeClass('open');
             $dd.toggleClass('open');
         });
 
@@ -58,7 +53,6 @@ function renderAuth() {
 
     } else {
         /* ─────────────── TRẠNG THÁI: CHƯA ĐĂNG NHẬP ─────────────── */
-        // CHỈ HIỆN nút Login và Register ở đây
         $d.append(
             $('<button class="btn-login">').text('Log In').on('click', function(){
                 window.location.href = '/pages/login.html';
@@ -74,28 +68,39 @@ function renderAuth() {
 
 function initials(name) {
     if (!name || name === 'Guest') return "?";
-
-    // Xóa khoảng trắng thừa
     name = name.trim();
     var parts = name.split(' ');
-
     if (parts.length >= 2) {
-        // Nếu có từ 2 từ trở lên: Lấy chữ đầu của từ đầu và từ cuối (VD: Lan Nguyen -> LN)
         return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
     } else {
-        // Nếu chỉ có 1 từ: Lấy 2 chữ cái đầu của từ đó (VD: lan -> LA)
         return name.slice(0, 2).toUpperCase();
     }
 }
 
-// Hàm xử lý Log Out
+// Xử lý Log Out bảo mật với API
 function handleLogout() {
-    localStorage.removeItem('token');
+    // 1. Gửi request báo cho Server tiêu hủy Cookie
+    $.ajax({
+        url: 'https://blog-inkwell.onrender.com/auth/logout',
+        type: 'POST',
+        xhrFields: {
+            withCredentials: true
+        },
+        success: function() {
+            clearFrontendAuth();
+        },
+        error: function(err) {
+            console.error("Lỗi khi đăng xuất ở server:", err);
+            // Dù server lỗi, vẫn xóa trạng thái ở Frontend để đảm bảo an toàn UI
+            clearFrontendAuth();
+        }
+    });
+}
+
+// Hàm phụ trợ dọn dẹp Frontend
+function clearFrontendAuth() {
     localStorage.removeItem('username');
-
-    // Xóa thêm các thông tin khác nếu cần
     if(typeof toast === 'function') toast('Đã đăng xuất thành công.');
-
     setTimeout(() => {
         window.location.href = '/index.html';
     }, 500);

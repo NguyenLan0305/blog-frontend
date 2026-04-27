@@ -19,62 +19,50 @@ function navigate(page) {
 }
 
 /* ─────────────── AUTHENTICATION UI TOGGLE & AVATAR SYNC ─────────────── */
-/* ─────────────── AUTHENTICATION UI TOGGLE & AVATAR SYNC ─────────────── */
 function updateNavAuth() {
-    const isAuth = S.isAuth;
-    const uname = S.uname;
-    const token = localStorage.getItem('token');
-
-    if (isAuth && token) {
+    if (S.isAuth) {
         $('.nav-guest').attr('style', 'display: none !important');
         $('.nav-user').attr('style', 'display: flex !important');
-        $('#nav-username, #mob-nav-username').text(uname);
+        $('#nav-username, #mob-nav-username').text(S.uname);
 
-        // --- MỔ TOKEN ĐỂ CHECK QUYỀN ADMIN ---
-        let isAdmin = false;
-        try {
-            const base64Url = token.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            // Fix lỗi font tiếng Việt khi giải mã token
-            const payload = JSON.parse(decodeURIComponent(window.atob(base64).split('').map(function(c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join('')));
-
-            // Lấy quyền từ thuộc tính scope (Spring Boot trả về ở đây)
-            const roles = payload.scope || payload.roles || "";
-            if (roles.includes("ADMIN")) {
-                isAdmin = true;
-            }
-        } catch (e) {
-            console.error("Lỗi giải mã token:", e);
-        }
-
-        // --- CẬP NHẬT GIAO DIỆN THEO QUYỀN ---
-        if (isAdmin) {
-            $('#btn-desk-admin').show();
-            $('#btn-mob-admin').attr('style', 'display: flex !important; color: var(--primary); font-weight: 600;');
-            $('.d-role').text('Admin'); // Đổi chữ Author thành Admin
-            $('.d-role').css('color', 'var(--primary)'); // Đổi màu chữ cho ngầu
-        } else {
-            $('#btn-desk-admin').hide();
-            $('#btn-mob-admin').attr('style', 'display: none !important;');
-            $('.d-role').text('Author'); // Trả về mặc định
-            $('.d-role').css('color', 'var(--t2)');
-        }
-
-        // Lấy Avatar
+        // Đặt Avatar tạm thời từ LocalStorage trước khi API chạy xong
         const savedAvatar = localStorage.getItem('avatarUrl');
         if (savedAvatar) {
             $('#nav-avatar, #mob-nav-avatar').html(`<img src="${savedAvatar}" alt="avatar" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`);
         } else {
-            const userInitials = typeof initials === 'function' ? initials(uname) : uname.charAt(0).toUpperCase();
+            const userInitials = typeof initials === 'function' ? initials(S.uname) : S.uname.charAt(0).toUpperCase();
             $('#nav-avatar, #mob-nav-avatar').text(userInitials);
         }
 
+        // GỌI API LẤY PROFILE ĐỂ CHECK AVATAR & QUYỀN ADMIN CÙNG LÚC
         callApi('/users/my-profile', 'GET').done(function(res) {
-            if (res.result && res.result.avatarUrl && res.result.avatarUrl !== savedAvatar) {
-                localStorage.setItem('avatarUrl', res.result.avatarUrl);
-                $('#nav-avatar, #mob-nav-avatar').html(`<img src="${res.result.avatarUrl}" alt="avatar" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`);
+            if (res && res.result) {
+                const user = res.result;
+
+                // 1. Cập nhật Avatar nếu có thay đổi
+                if (user.avatarUrl && user.avatarUrl !== savedAvatar) {
+                    localStorage.setItem('avatarUrl', user.avatarUrl);
+                    $('#nav-avatar, #mob-nav-avatar').html(`<img src="${user.avatarUrl}" alt="avatar" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`);
+                }
+
+                // 2. CHECK QUYỀN ADMIN (Dựa vào thuộc tính roles trả về từ Spring Boot)
+                let isAdmin = false;
+                if (user.roles && (user.roles.includes('ADMIN') || user.roles.includes('ROLE_ADMIN'))) {
+                    isAdmin = true;
+                }
+
+                // --- CẬP NHẬT GIAO DIỆN THEO QUYỀN ---
+                if (isAdmin) {
+                    $('#btn-desk-admin').show();
+                    $('#btn-mob-admin').attr('style', 'display: flex !important; color: var(--primary); font-weight: 600;');
+                    $('.d-role').text('Admin');
+                    $('.d-role').css('color', 'var(--primary)');
+                } else {
+                    $('#btn-desk-admin').hide();
+                    $('#btn-mob-admin').attr('style', 'display: none !important;');
+                    $('.d-role').text('Author');
+                    $('.d-role').css('color', 'var(--t2)');
+                }
             }
         });
 
@@ -88,15 +76,45 @@ function updateNavAuth() {
     }
 }
 
+/* ─────────────── LOGIC LOGOUT BẢO MẬT BẰNG COOKIE ─────────────── */
+$(document).on('click', '#btn-logout, #btn-mob-logout', function(e) {
+    e.preventDefault();
+
+    // Gọi API để Server hủy Cookie
+    callApi('/auth/logout', 'POST').done(function() {
+        clearFrontendAuth();
+    }).fail(function() {
+        // Nếu API lỗi (có thể do mạng), vẫn xóa trạng thái ở local cho an toàn
+        clearFrontendAuth();
+    });
+});
+
+function clearFrontendAuth() {
+    localStorage.removeItem('username');
+    localStorage.removeItem('avatarUrl');
+    localStorage.removeItem('notif_cleared_time');
+    if (typeof S !== 'undefined') { S.isAuth = false; S.uname = null; }
+    updateNavAuth();
+    toast("Đã đăng xuất thành công!");
+
+    var mobMenuEl = document.getElementById('mob-menu');
+    if (mobMenuEl && typeof bootstrap !== 'undefined') {
+        var mobMenu = bootstrap.Offcanvas.getInstance(mobMenuEl);
+        if (mobMenu) mobMenu.hide();
+    }
+
+    setTimeout(function() {
+        if ($('#p-home').length > 0) { navigate('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        else { window.location.href = '/index.html'; }
+    }, 300);
+}
+
 /* ─────────────── LOGIC ĐẾM VÀ TẮT THÔNG BÁO THÔNG MINH ─────────────── */
 function checkUnreadNotifications() {
-    // Lấy thời điểm người dùng click vào chuông lần cuối cùng
     const clearedTime = localStorage.getItem('notif_cleared_time') || 0;
 
     callApi('/notifications', 'GET').done(function(res) {
         const notifs = res.result || [];
-
-        // Đếm những thông báo: Chưa đọc VÀ Mới hơn lần cuối cùng click chuông
         const unreadCount = notifs.filter(n => !n.read && new Date(n.createdAt).getTime() > clearedTime).length;
 
         if (unreadCount > 0) {
@@ -107,11 +125,9 @@ function checkUnreadNotifications() {
     });
 }
 
-// BẮT SỰ KIỆN: Khi người dùng CLICK VÀO QUẢ CHUÔNG ở Navbar / Mobile
+// Khi người dùng CLICK VÀO QUẢ CHUÔNG ở Navbar / Mobile
 $(document).on('click', 'a[href="/pages/notifications.html"]', function() {
-    // Đánh dấu thời điểm hiện tại là "Đã xem tất cả"
     localStorage.setItem('notif_cleared_time', Date.now());
-    // Ẩn chấm đỏ ngay lập tức cho mượt
     $('#nav-notif-badge, #mob-notif-badge').hide().addClass('hidden');
 });
 
@@ -128,32 +144,6 @@ $(document).on('click', '#nav-brand', function(e){
     }
     if ($('#p-home').length > 0) { navigate('home'); }
     else { window.location.href = '/index.html'; }
-});
-
-$(document).on('click', '#btn-logout, #btn-mob-logout', function(e) {
-    e.preventDefault();
-
-    // Xóa toàn bộ thông tin đăng nhập và cache
-    localStorage.removeItem('token');
-    localStorage.removeItem('username');
-    localStorage.removeItem('avatarUrl');
-    localStorage.removeItem('notif_cleared_time');
-
-    if (typeof S !== 'undefined') { S.isAuth = false; S.uname = null; }
-
-    updateNavAuth();
-    toast("Đã đăng xuất thành công!");
-
-    var mobMenuEl = document.getElementById('mob-menu');
-    if (mobMenuEl && typeof bootstrap !== 'undefined') {
-        var mobMenu = bootstrap.Offcanvas.getInstance(mobMenuEl);
-        if (mobMenu) mobMenu.hide();
-    }
-
-    setTimeout(function() {
-        if ($('#p-home').length > 0) { navigate('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-        else { window.location.href = '/index.html'; }
-    }, 300);
 });
 
 /* ==========================================

@@ -36,7 +36,7 @@ function renderSbCategories() {
 
                     // TUYỆT ĐỐI KHÔNG GHI S.keyword = null Ở ĐÂY (Để giữ lại từ khóa nếu đang search)
 
-                    // 🔥 CẬP NHẬT: Đổi URL trình duyệt thông minh (Hỗ trợ Lọc Kép)
+                    // Đổi URL trình duyệt thông minh (Hỗ trợ Lọc Kép)
                     let newUrl = '/';
                     let params = new URLSearchParams();
 
@@ -77,7 +77,6 @@ function renderSbTrending() {
         $el.empty();
         var allPosts = res.result || res;
 
-        // 🔥 LOGIC TRENDING XỊN XÒ:
         // Sắp xếp các bài viết theo Lượt đọc (totalReads) giảm dần, sau đó chỉ cắt lấy 5 bài đầu tiên
         var trendingPosts = allPosts.sort(function(a, b) {
             return (b.totalReads || 0) - (a.totalReads || 0);

@@ -160,26 +160,24 @@
 
                 const formData = new FormData();
                 formData.append('file', selectedImageFile);
-
-                // Dùng Ajax trần vì hàm callApi mặc định đang gửi JSON
                 const uploadResponse = await $.ajax({
-                    url: 'https://blog-inkwell.onrender.com/upload/image', // Nhớ sửa domain nếu cần
+                    url: 'https://blog-inkwell.onrender.com/upload/image',
                     type: 'POST',
                     data: formData,
                     processData: false,
                     contentType: false,
-                    headers: {
-                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    xhrFields: {
+                        withCredentials: true
                     }
                 });
 
-                // Lấy URL xịn từ Cloudinary
+                // Lấy URL từ Cloudinary
                 currentAvatarUrl = uploadResponse.result;
             }
 
             btn.html('<span class="material-symbols-outlined" style="animation: spin 1s linear infinite;">sync</span> Saving Profile...');
 
-            // Gửi dữ liệu profile (với URL Cloudinary cực nhẹ)
+            // Gửi dữ liệu profile (với URL Cloudinary)
             const requestBody = {
                 email: $('#input-email').val().trim(),
                 bio: $('#input-bio').val().trim(),

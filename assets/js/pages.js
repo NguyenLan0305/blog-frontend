@@ -77,7 +77,7 @@ function buildTagsPage() {
                 ).on('click', function(){
                     S.tag = t.id; // Lấy UUID của Tag
 
-                    // 🔥 CẬP NHẬT 3: Đồng bộ URL cho Tag (Ví dụ: /tag/java-1234...)
+                    //Đồng bộ URL cho Tag (Ví dụ: /tag/java-1234...)
                     window.history.pushState({}, '', '/tag/' + t.slug);
 
                     navigate('home');

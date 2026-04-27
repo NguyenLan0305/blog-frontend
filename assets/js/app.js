@@ -11,7 +11,8 @@ var S = {
     keyword: null, //  BIẾN NÀY ĐỂ LƯU TỪ KHÓA TÌM KIẾM
     sort:   'createdAt,desc',
 
-    get isAuth() { return localStorage.getItem('token') !== null; },
+    //Dựa vào 'username' để check trạng thái UI
+    get isAuth() { return localStorage.getItem('username') !== null; },
     get uname()  { return localStorage.getItem('username') || 'Guest'; }
 };
 
@@ -23,24 +24,21 @@ function fmtDate(iso) {
     return new Date(iso).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
 }
 
-// 2. 🔥 CẬP NHẬT: Tạo đoạn trích từ chuỗi JSON của Editor.js
+// 2. Tạo đoạn trích từ chuỗi JSON của Editor.js
 function excerpt(s, n) {
     if (!s) return "";
     n = n || 200;
     let plainText = "";
 
     try {
-        // Cố gắng parse chuỗi JSON từ Editor.js
         let parsedData = JSON.parse(s);
         if (parsedData && parsedData.blocks) {
-            // Lọc ra các khối là đoạn văn (paragraph) và nối chúng lại
             plainText = parsedData.blocks
                 .filter(b => b.type === 'paragraph')
-                .map(b => b.data.text.replace(/<[^>]*>/g, '')) // Xóa thẻ b, i, a bên trong
+                .map(b => b.data.text.replace(/<[^>]*>/g, ''))
                 .join(' ');
         }
     } catch (e) {
-        // Nếu parse lỗi (không phải JSON), thì xử lý như chuỗi HTML/Text bình thường
         plainText = s.replace(/<[^>]*>/g, '').trim();
     }
 
@@ -56,10 +54,9 @@ function initials(name) {
     return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
 }
 
-// 4. 🔥 MỚI: Hàm hỗ trợ cắt lấy UUID từ chuỗi Slug (Dùng cho 3NF Backend)
+// 4. Lấy UUID từ chuỗi Slug
 function extractIdFromSlug(slug) {
     if (!slug) return null;
-    // UUID luôn có độ dài cố định là 36 ký tự, nên ta chỉ cần cắt 36 ký tự cuối cùng
     return slug.slice(-36);
 }
 
@@ -76,16 +73,12 @@ function toast(msg) {
 const API_BASE_URL = 'https://blog-inkwell.onrender.com';
 
 function callApi(endpoint, method, data = null) {
-    var token = localStorage.getItem('token');
-
     var ajaxConfig = {
         url: API_BASE_URL + endpoint,
         type: method,
         contentType: 'application/json',
-        beforeSend: function(xhr) {
-            if (token) {
-                xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-            }
+        xhrFields: {
+            withCredentials: true
         }
     };
 
@@ -97,6 +90,13 @@ function callApi(endpoint, method, data = null) {
         console.error("API Error: ", xhr.responseText);
         if (xhr.status === 401 || xhr.status === 403) {
             toast("Phiên đăng nhập hết hạn hoặc không có quyền!");
+
+            // Xóa dữ liệu User cũ ở Frontend (nếu Cookie thực sự hết hạn)
+            if (localStorage.getItem('username')) {
+                localStorage.removeItem('username');
+                // Đá văng người dùng về trang login nếu họ đang làm thao tác cần quyền
+                 window.location.href = '/pages/login.html';
+            }
         }
     });
 }

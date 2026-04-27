@@ -10,69 +10,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Newsreader:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-
-    <style>
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        body { background-color: var(--surface); color: var(--on-surface); font-family: 'Inter', sans-serif; }
-        a { text-decoration: none !important; }
-
-        /* ── Typography & Layout ── */
-        .section-title { font-family: 'Newsreader', serif; font-size: 2rem; font-weight: bold; color: var(--on-surface); }
-        .title-bar { height: 2px; width: 3rem; background-color: var(--primary); margin-top: 0.5rem; margin-bottom: 2rem; }
-
-        /* ── Profile card (Right) ── */
-        .avatar-ring { width: 7rem; height: 7rem; border-radius: 50%; border: 2px solid rgba(172,138,255,0.3); padding: 4px; margin-bottom: 1rem; }
-        .avatar-ring img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-        .profile-name { font-family: 'Newsreader', serif; font-size: 1.5rem; font-weight: bold; color: var(--on-surface); }
-        .profile-handle { color: var(--on-surface-variant); font-size: 0.875rem; margin-top: 0.25rem; }
-
-        .stats-row { display: flex; align-items: center; justify-content: center; gap: 1.5rem; margin: 1.5rem 0; }
-        .stat-item { text-align: center; cursor: pointer; padding: 0.5rem; border-radius: 8px; transition: background 0.2s; }
-        .stat-item:hover { background: var(--secondary); }
-        .stat-value { font-family: 'Newsreader', serif; font-size: 1.25rem; font-weight: bold; color: var(--on-surface); display: block;}
-        .stat-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--on-surface-variant); }
-
-        .bio-text { font-size: 0.875rem; color: var(--on-surface-variant); line-height: 1.6; margin-bottom: 1.5rem; text-align: center; }
-        .joined-row { color: var(--on-surface-variant); font-size: 0.75rem; display: flex; align-items: center; justify-content: center; gap: 0.4rem; margin-top: 1.5rem; opacity: 0.7; }
-
-        /* ── Buttons ── */
-        .btn-action { width: 100%; padding: 0.6rem; border-radius: 9999px; font-weight: 600; font-size: 0.875rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.2s; cursor: pointer; }
-        .btn-edit { border: 1px solid var(--outline-variant); color: var(--on-surface); background: transparent; }
-        .btn-edit:hover { background: var(--surface-variant); }
-
-        .btn-follow { border: none; color: white; background: var(--primary); }
-        .btn-follow:hover { opacity: 0.9; }
-
-        .btn-unfollow { border: 1px solid var(--outline-variant); color: var(--on-surface); background: transparent; }
-        .btn-unfollow:hover { border-color: var(--red); color: var(--red); }
-        /* Trick: Hover vào nút Đang theo dõi thì đổi chữ thành Hủy theo dõi */
-        .btn-unfollow:hover span.follow-text { display: none; }
-        .btn-unfollow:hover::after { content: 'Unfollow'; }
-
-        .empty-state { text-align: center; padding: 4rem 0; color: var(--on-surface-variant); }
-
-        /* Skeleton loading animation */
-        .sk { background: linear-gradient(90deg, var(--bg-card-h) 25%, var(--surface-variant) 50%, var(--bg-card-h) 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px; }
-        @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
-        /* ── CSS cho Modal Follow ── */
-        .modal-content { background-color: var(--surface-container); border: 1px solid var(--outline-variant); color: var(--on-surface); }
-        .modal-header { border-bottom: 1px solid rgba(66,72,85,0.3); }
-        .search-user-input { background: var(--surface); border: 1px solid var(--outline-variant); color: var(--on-surface); padding: 0.6rem 1rem; border-radius: 99px; width: 100%; outline: none; margin-bottom: 1rem; }
-        .search-user-input:focus { border-color: var(--primary); }
-
-        .user-list-item { display: flex; align-items: center; justify-content: space-between; padding: 0.8rem 0; border-bottom: 1px solid rgba(66,72,85,0.15); }
-        .user-list-item:last-child { border-bottom: none; }
-        .user-list-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-        .btn-sm-follow { padding: 0.3rem 1rem; font-size: 0.8rem; border-radius: 99px; cursor: pointer; font-weight: 500; transition: all 0.2s;}
-        .btn-sm-follow.is-following { border: 1px solid var(--outline-variant); background: transparent; color: var(--on-surface); }
-        .btn-sm-follow.is-following:hover { border-color: var(--red); color: var(--red); }
-        .btn-sm-follow.is-following:hover span { display: none; }
-        .btn-sm-follow.is-following:hover::after { content: 'Unfollow'; }
-
-        .btn-sm-follow.not-following { border: none; background: var(--primary); color: white; }
-        .btn-sm-follow.not-following:hover { opacity: 0.8; }
-    </style>
+    <link rel="stylesheet" href="/assets/css/user-profile.css">
 </head>
 <body class="overflow-x-hidden bg-background no-global-search">
 

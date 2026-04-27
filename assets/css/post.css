@@ -1,0 +1,57 @@
+
+    /* CSS cho Sidebar Comment */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Đường kẻ dọc cho Reply lồng nhau */
+.comment-thread { position: relative; }
+.comment-thread::before {
+    content: ''; position: absolute;
+    left: 15px; top: 40px; bottom: -10px; /* Căn lề theo avatar */
+    width: 2px; background-color: var(--border);
+    border-radius: 2px;
+}
+
+/* Chỉnh sửa riêng cho avatar trong danh sách comment */
+.comment-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(172,138,255,0.2); flex-shrink: 0; }
+
+body { background-color: var(--surface); color: var(--on-surface); font-family: 'Inter', sans-serif; }
+a { text-decoration: none !important; }
+.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+/* CSS tuỳ chỉnh cho bài viết */
+.article-container { max-width: 760px; margin: 0 auto; }
+.article-banner { width: 100%; aspect-ratio: 21/9; object-fit: cover; margin-bottom: 2.5rem; background-color: var(--card); border-radius: 12px;}
+
+.article-title { font-family: 'Newsreader', serif; font-size: 2.75rem; font-weight: 700; color: var(--on-surface); margin-bottom: 1.5rem; line-height: 1.2; letter-spacing: -0.02em; }
+
+/* Author Row */
+.author-avatar { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(172,138,255,0.2); }
+.author-name { color: var(--on-surface); font-weight: 600; font-size: 0.95rem; }
+.author-name:hover { color: var(--primary); }
+.author-handle { color: var(--on-surface-variant); font-size: 0.85rem; }
+
+/* Action Bar (Like, Comment, Share) */
+.action-bar { display: flex; align-items: center; justify-content: space-between; padding: 0.8rem 0; margin: 2rem 0 2.5rem; border-top: 1px solid rgba(66,72,85,0.2); border-bottom: 1px solid rgba(66,72,85,0.2); }
+.action-btn { display: flex; align-items: center; gap: 0.4rem; color: var(--on-surface-variant); cursor: pointer; transition: color 0.2s; font-size: 0.9rem; }
+.action-btn:hover { color: var(--on-surface); }
+.action-btn.like:hover { color: var(--red); }
+
+/* Article Content */
+.article-content { font-family: 'Newsreader', serif; font-size: 1.25rem; line-height: 1.8; color: var(--text); }
+.article-content p { margin-bottom: 1.8rem; }
+.article-content h2 { font-family: 'Newsreader', serif; font-size: 2rem; font-weight: 700; color: var(--on-surface); margin: 2.5rem 0 1rem; }
+.article-content h3 { font-family: 'Inter', sans-serif; font-size: 1.4rem; font-weight: 600; color: var(--on-surface); margin: 2rem 0 1rem; }
+.article-content img { max-width: 100%; border-radius: 8px; margin: 2rem 0; display: block; }
+.article-content blockquote { border-left: 3px solid var(--primary); padding-left: 1.5rem; font-style: italic; color: var(--on-surface-variant); margin: 2rem 0; font-size: 1.35rem; }
+.article-content pre { background: var(--card); padding: 1.5rem; border-radius: 8px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; border: 1px solid rgba(66,72,85,0.15); margin-bottom: 2rem; }
+.article-content ul, .article-content ol { margin-bottom: 2rem; padding-left: 1.5rem; }
+.article-content li { margin-bottom: 0.5rem; }
+.article-content hr { border-color: rgba(66,72,85,0.3); margin: 3rem 0; }
+
+.tag-pill { background: var(--secondary); padding: 0.3rem 0.8rem; border-radius: 9999px; color: var(--on-surface); font-size: 0.85rem; transition: background 0.2s; display: inline-block; }
+.tag-pill:hover { background: var(--bg-card-h); }
+
+/* Class dùng cho trạng thái Like / Unlike để tránh lỗi parse CSS inline */
+.heart-filled { font-variation-settings: 'FILL' 1; color: var(--red) !important; }
+.heart-outline { font-variation-settings: 'FILL' 0; color: var(--on-surface-variant) !important; }

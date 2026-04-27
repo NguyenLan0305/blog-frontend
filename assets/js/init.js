@@ -22,7 +22,7 @@ $(document).ready(function() {
     // KHU VỰC CHÍNH (MAIN CONTENT)
     // ==========================================
 
-    // 1. 🔥 ĐÃ MỞ KHÓA: Ra lệnh cho filters.js đi lấy danh sách Category và Tag
+    // 1.Ra lệnh cho filters.js đi lấy danh sách Category và Tag
     if (typeof fetchAndRenderFilters === 'function') {
         fetchAndRenderFilters();
     }
@@ -46,11 +46,4 @@ $(document).ready(function() {
     if (typeof renderSbTrending === 'function') {
         renderSbTrending();
     }
-
-    // 5. (ĐÃ ẨN) Ra lệnh tải danh sách Thẻ (Tags) cũ ở cột phải
-    /*
-    if (typeof renderSbTags === 'function') {
-        renderSbTags();
-    }
-    */
 });

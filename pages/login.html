@@ -70,6 +70,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 <script>
     // Hàm tiện ích để hiển thị thông báo Toast
@@ -77,73 +78,69 @@
         const toastElement = document.getElementById('liveToast');
         const toastBody = document.getElementById('toastMessage');
 
-        // Đặt nội dung
         toastBody.textContent = message;
-
-        // Xóa các class màu cũ (nếu có) và thêm màu mới (danger = đỏ, success = xanh...)
         toastElement.className = `toast align-items-center text-bg-${type} border-0`;
 
-        // Khởi tạo và hiển thị Toast bằng Bootstrap JS API
         const toast = new bootstrap.Toast(toastElement);
         toast.show();
     }
 
-    document.getElementById('loginForm').addEventListener('submit', function(event) {
-        // 1. Chặn hành động reload trang mặc định của Form
+    // Xử lý sự kiện Submit Form bằng jQuery AJAX
+    $('#loginForm').on('submit', function(event) {
         event.preventDefault();
 
-        // 2. Lấy dữ liệu người dùng nhập
-        const user = document.getElementById('username').value;
-        const pass = document.getElementById('password').value;
+        const user = $('#username').val();
+        const pass = $('#password').val();
 
-        // Hiệu ứng UX: Vô hiệu hóa nút bấm tạm thời để tránh bấm 2 lần
-        const btnSubmit = document.getElementById('btnSubmit');
-        btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang xử lý...';
-        btnSubmit.disabled = true;
+        const btnSubmit = $('#btnSubmit');
+        const originalText = btnSubmit.html();
 
-        // 3. Gửi request gọi API của Spring Boot
-        fetch('https://blog-inkwell.onrender.com/auth/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
+        // Hiệu ứng Loading
+        btnSubmit.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang xử lý...').prop('disabled', true);
+
+        $.ajax({
+            url: 'https://blog-inkwell.onrender.com/auth/login',
+            type: 'POST',
+            contentType: 'application/json',
+            xhrFields: {
+                withCredentials: true
             },
-            body: JSON.stringify({
+            data: JSON.stringify({
                 username: user,
                 password: pass
-            })
-        })
-            .then(response => response.json().then(data => ({ status: response.status, body: data })))
-            .then(({ status, body }) => {
-                // Trả lại trạng thái ban đầu cho nút bấm
-                btnSubmit.innerHTML = 'Đăng nhập';
-                btnSubmit.disabled = false;
+            }),
+            success: function(res) {
+                // Phục hồi nút bấm
+                btnSubmit.html(originalText).prop('disabled', false);
 
-                // 4. Xử lý kết quả trả về
-                if (status === 200 && body.code === 1000) {
-                    // Cất Token vào két sắt của trình duyệt (localStorage)
-                    localStorage.setItem('token', body.result.token);
+                // Kiểm tra code thành công từ API
+                if (res.code === 1000) {
+                    // Lưu lại username để hiển thị ở Navbar
                     localStorage.setItem('username', user);
 
-                    // Hiện thông báo thành công màu xanh trước khi chuyển trang (tùy chọn)
                     showToast('Đăng nhập thành công! Đang chuyển hướng...', 'success');
-
                     setTimeout(() => {
                         window.location.href = "/index.html";
                     }, 1000);
-
                 } else {
-                    // Nếu thất bại (Sai mật khẩu, user không tồn tại...) - Thay vì alert, gọi showToast
-                    showToast('Đăng nhập thất bại: ' + (body.message || 'Lỗi không xác định'));
+                    showToast('Đăng nhập thất bại: ' + (res.message || 'Lỗi không xác định'));
                 }
-            })
-            .catch(error => {
-                btnSubmit.innerHTML = 'Đăng nhập';
-                btnSubmit.disabled = false;
-                console.error('Lỗi kết nối:', error);
+            },
+            error: function(xhr) {
+                // Phục hồi nút bấm
+                btnSubmit.html(originalText).prop('disabled', false);
 
-                // Thay vì alert, gọi showToast
-                showToast('Không thể kết nối đến Server Backend!');
-            });
+                console.error('Lỗi kết nối:', xhr);
+
+                // Trích xuất câu thông báo lỗi từ Spring Boot (nếu có)
+                let errMsg = 'Không thể kết nối đến Server Backend!';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errMsg = xhr.responseJSON.message;
+                }
+
+                showToast('Đăng nhập thất bại: ' + errMsg);
+            }
+        });
     });
 </script>
 </body>

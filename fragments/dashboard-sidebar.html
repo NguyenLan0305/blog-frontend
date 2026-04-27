@@ -44,35 +44,53 @@
 <script>
     $(document).ready(function() {
         var path = window.location.pathname;
-        var page = path.split("/").pop().toLowerCase();
+        // Mặc định nếu ở thư mục gốc thì gán là manage-blogs.html
+        var page = path.split("/").pop().toLowerCase() || 'manage-blogs.html';
 
         var activeClasses = "text-[var(--primary)] border-r-2 border-[var(--primary)] bg-gradient-to-r from-[var(--primary)]/10 to-transparent font-bold";
         var inactiveClasses = "text-[var(--muted)] hover:bg-[var(--secondary)] hover:text-[var(--text)]";
 
         $('.sidebar-link').each(function() {
-            var href = $(this).attr('href').toLowerCase();
-            if (page === href || (page === '' && href === '/pages/manage-blogs.html')) {
-                $(this).addClass(activeClasses);
+            // Cắt lấy phần đuôi của href để so sánh 1-1 với biến page
+            var hrefPart = $(this).attr('href').split("/").pop().toLowerCase();
+
+            if (page === hrefPart) {
+                $(this).addClass(activeClasses).removeClass(inactiveClasses);
                 $(this).find('.material-symbols-outlined').css('font-variation-settings', "'FILL' 1");
             } else {
-                $(this).addClass(inactiveClasses);
+                $(this).addClass(inactiveClasses).removeClass(activeClasses);
                 $(this).find('.material-symbols-outlined').css('font-variation-settings', "'FILL' 0");
             }
         });
 
         $('#btn-logout-sidebar').on('click', function(e) {
             e.preventDefault();
+
+            // Ưu tiên "mượn" nút logout ở Navbar trên cùng (đã được cấu hình chuẩn trong nav.js)
             if ($('#btn-logout').length) {
                 $('#btn-logout').click();
-            } else if (typeof window.logout === 'function') {
+            }
+            else if (typeof window.logout === 'function') {
                 window.logout();
-            } else {
-                localStorage.removeItem('token');
-                localStorage.removeItem('username');
-                localStorage.removeItem('avatarUrl'); // Xóa cache avatar
-                localStorage.removeItem('notif_cleared_time'); // Xóa cache chuông
-                window.location.href = '/index.html';
+            }
+            else {
+                // Đảm bảo gọi API Server để hủy HttpOnly Cookie nếu Navbar không tồn tại
+                if (typeof callApi === 'function') {
+                    callApi('/auth/logout', 'POST').always(function() {
+                        clearLocalAuth();
+                    });
+                } else {
+                    clearLocalAuth();
+                }
             }
         });
+
+        // Hàm dọn dẹp dự phòng
+        function clearLocalAuth() {
+            localStorage.removeItem('username');
+            localStorage.removeItem('avatarUrl');
+            localStorage.removeItem('notif_cleared_time');
+            window.location.href = '/index.html';
+        }
     });
 </script>
