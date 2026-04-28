@@ -90,12 +90,19 @@ function callApi(endpoint, method, data = null) {
         console.error("API Error: ", xhr.responseText);
         if (xhr.status === 401 || xhr.status === 403) {
             toast("Phiên đăng nhập hết hạn hoặc không có quyền!");
+            localStorage.removeItem('username');
 
-            // Xóa dữ liệu User cũ ở Frontend (nếu Cookie thực sự hết hạn)
-            if (localStorage.getItem('username')) {
-                localStorage.removeItem('username');
-                // Đá văng người dùng về trang login nếu họ đang làm thao tác cần quyền
-                 window.location.href = '/pages/login.html';
+            // Chỉ chuyển hướng nếu đang ở các trang quản lý hoặc soạn thảo
+            const protectedPages = ['/pages/blog-editor.html', '/pages/manage-blogs.html', '/admin/'];
+            const isProtected = protectedPages.some(p => window.location.pathname.includes(p));
+
+            if (isProtected) {
+                setTimeout(() => {
+                    window.location.href = '/pages/login.html';
+                }, 1500); // Chờ 1.5s để người dùng kịp đọc Toast thông báo
+            } else {
+                // Nếu ở trang chủ thì chỉ cần load lại để cập nhật Navbar (ẩn avatar)
+                if (typeof updateNavAuth === 'function') updateNavAuth();
             }
         }
     });

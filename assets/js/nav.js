@@ -92,7 +92,7 @@ $(document).on('click', '#btn-logout, #btn-mob-logout', function(e) {
 function clearFrontendAuth() {
     localStorage.removeItem('username');
     localStorage.removeItem('avatarUrl');
-    localStorage.removeItem('notif_cleared_time');
+    localStorage.removeItem('notif_cleared_time');f
     if (typeof S !== 'undefined') { S.isAuth = false; S.uname = null; }
     updateNavAuth();
     toast("Đã đăng xuất thành công!");

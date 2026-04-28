@@ -855,7 +855,7 @@
         }
     }
 
-    // HÀM PUBLISH
+    // hàm đăng bài viết
     async function validateAndPublish() {
         const sel = document.getElementById('pv-form-category');
         const errorMsg = document.getElementById('pv-cat-error');
@@ -929,9 +929,7 @@
 
             const apiMethod = editingBlogId ? 'PUT' : 'POST';
             const apiEndpoint = editingBlogId ? '/blogs/' + editingBlogId : '/blogs';
-
             const res = await callApi(apiEndpoint, apiMethod, requestBody);
-
             selectedBannerFile = null;
             window.location.href = '/pages/post.html?id=' + res.result.slug;
 
